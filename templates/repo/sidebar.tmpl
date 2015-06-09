@@ -24,22 +24,22 @@
                 </button>
             </a>
         </li>
-		<li id="repo-header-download-zip" class="btns drop">
-			<a class="sidebar-btns" id="repo-header-download-btn" href="#">
-				<button class="btn btn-gray text-bold btn-radius">
-					<i class="octicon octicon-cloud-download"></i> Download
-				</button>
-			</a>
-			<div id="repo-header-download-drop" class="drop-down">
-				<div id="repo-download" class="clear">
-					<div class="text-center" id="repo-clone-zip">
-						<a class="btn btn-green btn-radius" href="{{$.RepoLink}}/archive/{{EscapePound $.BranchName}}.zip"><i class="octicon octicon-file-zip"></i>ZIP</a>
-						<a class="btn btn-green btn-radius" href="{{$.RepoLink}}/archive/{{EscapePound $.BranchName}}.tar.gz"><i class="octicon octicon-file-zip"></i>TAR.GZ</a>
-					</div>
-				</div>
-			</div>
-		</li>
-		{{end}}
+        <li id="repo-header-download-zip" class="btns drop">
+            <a class="sidebar-btns" id="repo-header-download-btn" href="#">
+                <button class="btn btn-gray text-bold btn-radius">
+                    <i class="octicon octicon-cloud-download"></i> Download
+                </button>
+            </a>
+            <div id="repo-header-download-drop" class="drop-down">
+                <div id="repo-download" class="clear">
+                    <div class="text-center" id="repo-clone-zip">
+                        <a class="btn btn-green btn-radius" href="{{$.RepoLink}}/archive/{{EscapePound $.BranchName}}.zip"><i class="octicon octicon-file-zip"></i>ZIP</a>
+                        <a class="btn btn-green btn-radius" href="{{$.RepoLink}}/archive/{{EscapePound $.BranchName}}.tar.gz"><i class="octicon octicon-file-zip"></i>TAR.GZ</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {{end}}
         <li>
             <a class="radius" href="{{.RepoLink}}/issues"><i class="octicon octicon-issue-opened"></i>{{.i18n.Tr "repo.issues"}}<span class="num right label label-blue label-radius">{{.Repository.NumOpenIssues}}</span></a>
         </li>

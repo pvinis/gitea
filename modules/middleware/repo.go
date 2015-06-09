@@ -290,6 +290,11 @@ func RepoAssignment(redirect bool, args ...bool) macaron.Handler {
 			return
 		}
 
+		if err = repo.GetWikiRepo(); err != nil {
+			ctx.Handle(500, "GetWikiRepo", err)
+			return
+		}
+
 		ctx.Data["Title"] = u.Name + "/" + repo.Name
 		ctx.Data["Repository"] = repo
 		ctx.Data["Owner"] = ctx.Repo.Repository.Owner

@@ -449,6 +449,8 @@ func runWeb(ctx *cli.Context) {
 		m.Get("/labels2/", repo.Labels2)
 		m.Get("/milestone2/", repo.Milestones2)
 
+		m.Get("/wiki/", repo.Wiki)
+
 		m.Group("", func() {
 			m.Get("/src/*", repo.Home)
 			m.Get("/raw/*", repo.SingleDownload)

@@ -162,6 +162,10 @@ type Repository struct {
 	ForkId   int64
 	ForkRepo *Repository `xorm:"-"`
 
+	IsWiki       bool        `xorm:"NOT NULL DEFAULT false"`
+	WikiRepoId   int64       `xorm:"NOT NULL DEFAULT 0"`
+	WikiRepo     *Repository `xorm:"-"`
+
 	Created time.Time `xorm:"CREATED"`
 	Updated time.Time `xorm:"UPDATED"`
 }
@@ -188,6 +192,15 @@ func (repo *Repository) GetForkRepo() (err error) {
 	}
 
 	repo.ForkRepo, err = GetRepositoryById(repo.ForkId)
+	return err
+}
+
+func (repo *Repository) GetWikiRepo() (err error) {
+	if !repo.IsWiki {
+		return nil
+	}
+
+	repo.WikiRepo, err = GetRepositoryById(repo.WikiRepoId)
 	return err
 }
 
