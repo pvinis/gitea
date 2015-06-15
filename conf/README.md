@@ -23,5 +23,5 @@ the following command always if one of these configuration files changes.
 Execute this command always in the root directory of this project.
 
 ```
-go-bindata -o=modules/bindata/bindata.go -ignore="\\.DS_Store|README.md" -pkg=bindata conf/...
+go-bindata -o=modules/bindata/bindata.go -ignore="\\.DS_Store|README\.md" -pkg=bindata conf/...
 ```
