@@ -172,3 +172,19 @@ type EditReleaseForm struct {
 func (f *EditReleaseForm) Validate(ctx *macaron.Context, errs binding.Errors) binding.Errors {
 	return validate(errs, ctx.Data, f, ctx.Locale)
 }
+
+
+//
+// \      /  |  |  /  |
+//  \ /\ /   |  | |   |
+//   \  \    |  |  \  |
+//
+
+type CreateWikiPageForm struct {
+	Title   string `form:"title" binding:"Required;MaxSize(255)"`
+	Content string `form:"content" binding:"Required"`
+}
+
+func (f *CreateWikiPageForm) Validate(ctx *macaron.Context, errs binding.Errors) binding.Errors {
+	return validate(errs, ctx.Data, f, ctx.Locale)
+}

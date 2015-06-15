@@ -196,7 +196,7 @@ func (repo *Repository) GetForkRepo() (err error) {
 }
 
 func (repo *Repository) GetWikiRepo() (err error) {
-	if !repo.IsWiki {
+	if repo.IsWiki || repo.WikiRepoId == 0 {
 		return nil
 	}
 
@@ -374,7 +374,7 @@ func MirrorRepository(repoId int64, userName, repoName, repoPath, url string) er
 
 // MigrateRepository migrates a existing repository from other project hosting.
 func MigrateRepository(u *User, name, desc string, private, mirror bool, url string) (*Repository, error) {
-	repo, err := CreateRepository(u, name, desc, "", "", private, mirror, false)
+	repo, err := CreateRepository(u, name, desc, "", "", private, mirror, false, false, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -547,7 +547,7 @@ func initRepository(e Engine, repoPath string, u *User, repo *Repository, initRe
 }
 
 // CreateRepository creates a repository for given user or organization.
-func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMirror, initReadme bool) (_ *Repository, err error) {
+func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMirror, initReadme, isWiki bool, wikiForRepoID int64) (_ *Repository, err error) {
 	if err = IsUsableName(name); err != nil {
 		return nil, err
 	}
@@ -566,6 +566,7 @@ func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMi
 		LowerName:   strings.ToLower(name),
 		Description: desc,
 		IsPrivate:   isPrivate,
+		IsWiki:      isWiki,
 	}
 
 	sess := x.NewSession()
@@ -578,6 +579,11 @@ func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMi
 		return nil, err
 	} else if _, err = sess.Exec("UPDATE `user` SET num_repos = num_repos + 1 WHERE id = ?", u.Id); err != nil {
 		return nil, err
+	} else if isWiki {
+		_, err = sess.Exec("UPDATE `repository` SET wiki_repo_id = ? WHERE id = ?", repo.Id, wikiForRepoID);
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// TODO fix code for mirrors?

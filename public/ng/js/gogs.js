@@ -1036,6 +1036,11 @@ $(document).ready(function () {
         initTimeSwitch();
         initDiff();
     }
+    if ($('#wiki-page-create-form').length) {
+        var editor = new Editor();
+        editor.render();
+        initWikiCreatePage(editor);
+    }
 
     $('#dashboard-sidebar-menu').tabs();
     $('#pull-issue-preview').markdown_preview(".issue-add-comment");
@@ -1073,3 +1078,26 @@ function homepage() {
 String.prototype.endsWith = function (suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
+
+function initWikiCreatePage(editor) {
+    $('#wiki-page-create-form').submit(function () {
+        var url = $(this).attr('action');
+        data = $(this).serialize();
+        data.content = editor.codemirror.getValue();
+        $.ajax({
+            url: url,
+            data: data,
+            dataType: "json",
+            method: "post",
+            success: function (json) {
+                if (json.ok && json.data.length) {
+                    window.location.href = json.data;
+                    location.reload();
+                } else {
+                    $('#submit-error').html(json.error);
+                }
+            }
+        });
+        return false;
+    });
+}

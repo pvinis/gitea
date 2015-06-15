@@ -428,6 +428,9 @@ func runWeb(ctx *cli.Context) {
 
 		m.Post("/comment/:action", repo.Comment)
 
+		m.Get("/wiki/new", repo.CreateWikiPage)
+		m.Post("/wiki/new", bindIgnErr(auth.CreateWikiPageForm{}), repo.CreateWikiPagePost)
+
 		m.Group("/releases", func() {
 			m.Get("/new", repo.NewRelease)
 			m.Post("/new", bindIgnErr(auth.NewReleaseForm{}), repo.NewReleasePost)
@@ -449,7 +452,8 @@ func runWeb(ctx *cli.Context) {
 		m.Get("/labels2/", repo.Labels2)
 		m.Get("/milestone2/", repo.Milestones2)
 
-		m.Get("/wiki/", repo.Wiki)
+		m.Get("/wiki", repo.Wiki)
+//		m.Get("/wiki/:slug", repo.WikiPage)
 
 		m.Group("", func() {
 			m.Get("/src/*", repo.Home)

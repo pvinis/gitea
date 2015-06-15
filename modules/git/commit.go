@@ -138,13 +138,11 @@ func (c *Commit) GetSubModules() (map[string]*SubModule, error) {
 func (c *Commit) GetTreeFiles(treename string) ([][]interface{}, Entries, error) {
 	tree, err := c.SubTree(treename)
 	if err != nil {
-//		ctx.Handle(404, "SubTree", err)
 		return nil, nil, err
 	}
 
 	entries, err := tree.ListEntries(treename)
 	if err != nil {
-//		ctx.Handle(500, "ListEntries", err)
 		return nil, nil, err
 	}
 	entries.Sort()
@@ -159,14 +157,12 @@ func (c *Commit) GetTreeFiles(treename string) ([][]interface{}, Entries, error)
 		if te.Type != COMMIT {
 			c, err := c.GetCommitOfRelPath(filepath.Join(treePath, te.Name()))
 			if err != nil {
-//				ctx.Handle(500, "GetCommitOfRelPath", err)
 				return nil, nil, err
 			}
 			files = append(files, []interface{}{te, c})
 		} else {
 			sm, err := c.GetSubModule(path.Join(treename, te.Name()))
 			if err != nil {
-//				ctx.Handle(500, "GetSubModule", err)
 				return nil, nil, err
 			}
 			smUrl := ""
@@ -176,7 +172,6 @@ func (c *Commit) GetTreeFiles(treename string) ([][]interface{}, Entries, error)
 
 			commit, err := c.GetCommitOfRelPath(filepath.Join(treePath, te.Name()))
 			if err != nil {
-//				ctx.Handle(500, "GetCommitOfRelPath", err)
 				return nil, nil, err
 			}
 			files = append(files, []interface{}{te, NewSubModuleFile(commit, smUrl, te.Id.String())})

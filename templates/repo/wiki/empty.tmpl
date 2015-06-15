@@ -6,11 +6,12 @@
         <div class="panel panel-radius" id="repo-wiki">
             <p class="panel-header">
                 <i class="icon fa fa-book fa-lg"></i>
-                <strong class="file-name">{{.Title}}</strong>
+                <strong class="file-name">{{.i18n.Tr "repo.wiki.wiki" }}</strong>
             </p>
-            <div class="panel-content markdown code-view" id="repo-code-view">
-                <div id="test" class="anchor-wrap"><h1>test<a class="anchor" href="#test"><span
-                        class="octicon octicon-link"></span></a></h1></div>
+            <div class="panel-content code-view" id="repo-wiki-view">
+                <p class="text-center">
+                    {{.i18n.Tr "repo.wiki.empty_message" $.RepoLink "wiki/new" | Str2html }}
+                </p>
             </div>
         </div>
     </div>
