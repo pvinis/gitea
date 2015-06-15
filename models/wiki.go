@@ -5,17 +5,18 @@ import (
 	"errors"
 	"io/ioutil"
 	"path/filepath"
-	"strings"
 	"os"
 	"time"
 
 	"github.com/Unknwon/com"
 
 	"github.com/go-gitea/gitea/modules/process"
+
+	"github.com/kennygrant/sanitize"
 )
 
 type WikiPage struct {
-	Name     string
+	Title    string
 	Alias    string
 	Content  string
 	Repo     *Repository
@@ -55,9 +56,8 @@ func (p *WikiPage) create(u *User) error {
 		return errors.New("git clone: " + stderr)
 	}
 
-	// ToDo: Make it clearer and smarter
-	filename := strings.Replace(p.Name, " ", "_", -1)
-	if err := ioutil.WriteFile(filepath.Join(tmpDir, fmt.Sprintf("%s.md", strings.ToLower(filename))),
+	filename := sanitize.Path(p.Title)
+	if err := ioutil.WriteFile(filepath.Join(tmpDir, fmt.Sprintf("%s.md", filename)),
 		[]byte(p.Content), 0644); err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (p *WikiPage) create(u *User) error {
 	if _, stderr, err = process.ExecDir(-1,
 		tmpDir, fmt.Sprintf("initRepoCommit(git commit): %s", tmpDir),
 		"git", "commit", fmt.Sprintf("--author='%s <%s>'", sig.Name, sig.Email),
-		"-m", fmt.Sprintf("Create page %s", p.Name)); err != nil {
+		"-m", fmt.Sprintf("Create page %s", p.Title)); err != nil {
 		return errors.New("git commit: " + stderr)
 	}
 

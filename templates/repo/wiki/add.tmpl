@@ -2,11 +2,16 @@
 {{template "ng/base/header" .}}
 <div id="repo-wrapper">
     {{template "repo/header" .}}
-    <form class="form form-align panel panel-radius" action="{{.RepoLink}}/wiki/new" method="post" id="wiki-page-create-form">
+    <form class="form panel panel-radius" action="{{.RepoLink}}/wiki/new" method="post" id="wiki-page-create-form">
         {{.CsrfTokenHtml}}
         <div class="panel-header">
-            <h2>{{.Title}}</h2>
-            <input type="hidden" name="title" value="{{.Title}}">
+            {{if .PageTitle}}
+                <h2>{{.PageTitle}}</h2>
+                <input type="hidden" name="title" value="{{.PageTitle}}">
+            {{else}}
+                <label>Title:</label>
+                <input type="text" class="ipt" name="title" value="{{.PageTitle}}">
+            {{end}}
         </div>
         <div class="panel-content">
             {{template "ng/base/alert" .}}

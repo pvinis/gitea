@@ -44,7 +44,7 @@ func Wiki(ctx *middleware.Context) {
 func CreateWikiPage(ctx *middleware.Context) {
 	wr := ctx.Repo.Repository.WikiRepo
 	if wr == nil {
-		ctx.Data["Title"] = "Home"
+		ctx.Data["PageTitle"] = "Home"
 	}
 
 	_, err := ctx.Repo.Repository.GetCollaborators()
@@ -100,7 +100,7 @@ func CreateWikiPagePost(ctx *middleware.Context, form auth.CreateWikiPageForm) {
 	}
 
 	p := &models.WikiPage {
-		Name:    form.Title,
+		Title:   form.Title,
 		Content: form.Content,
 		Repo:    ctx.Repo.Repository.WikiRepo,
 	}
@@ -111,8 +111,5 @@ func CreateWikiPagePost(ctx *middleware.Context, form auth.CreateWikiPageForm) {
 		return
 	}
 
-	send(200, p.Alias, nil)
-	// Create repo if needed
-	// Create page
-	// Redirect to page
+	send(200, fmt.Sprintf("%s/wiki/%s", ctx.Repo.RepoLink, p.Alias), nil)
 }
