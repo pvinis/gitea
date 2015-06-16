@@ -1,0 +1,17 @@
+{{template "ng/base/head" .}}
+{{template "ng/base/header" .}}
+<div id="repo-wrapper">
+    {{template "repo/header" .}}
+    <div id="repo-content" class="clear container">
+        <div class="panel panel-radius" id="repo-wiki">
+            <p class="panel-header">
+                <i class="icon fa fa-book fa-lg"></i>
+                <strong class="file-name">{{.Page.Title}}</strong>
+            </p>
+            <div class="panel-content markdown code-view" id="repo-code-view">
+                {{.Page.Content}}
+            </div>
+        </div>
+    </div>
+</div>
+{{template "ng/base/footer" .}}

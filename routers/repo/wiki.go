@@ -2,19 +2,20 @@ package repo
 
 import (
 	"errors"
-//	"fmt"
+	"fmt"
+
 	"github.com/go-gitea/gitea/models"
 	"github.com/go-gitea/gitea/modules/auth"
 	"github.com/go-gitea/gitea/modules/base"
 	"github.com/go-gitea/gitea/modules/log"
 	"github.com/go-gitea/gitea/modules/middleware"
-	"fmt"
 )
 
 const (
 	WIKI       base.TplName = "repo/wiki/home"
 	WIKI_EMPTY base.TplName = "repo/wiki/empty"
 	WIKI_ADD   base.TplName = "repo/wiki/add"
+	WIKI_VIEW  base.TplName = "repo/wiki/view"
 )
 
 func Wiki(ctx *middleware.Context) {
@@ -25,20 +26,29 @@ func Wiki(ctx *middleware.Context) {
 		ctx.HTML(200, WIKI_EMPTY)
 		return
 	}
-	//    refName := wr.DefaultBranch
-	//    if !ctx.Repo.GitRepo.IsBranchExist(refName) {
-	//        brs, err := ctx.Repo.GitRepo.GetBranches()
-	//        if err != nil {
-	//            ctx.Handle(500, "GetBranches", err)
-	//            return
-	//        }
-	//        refName = brs[0]
-	//    }
-	//    ctx.Repo.Commit, err = ctx.Repo.GitRepo.GetCommitOfBranch(refName)
-	//
-	//
-	//    ctx.Data["Pages"] = wr
-	ctx.HTML(200, WIKI)
+
+	// filepath.Glob(wr.WikiRepoPath() + "/*.md")
+	p, err := models.GetWikiPage(wr, "home")
+	if err != nil {
+		ctx.Handle(500, "wiki.Wiki", err)
+	}
+	ctx.Data["Page"] = p
+	ctx.HTML(200, WIKI_VIEW)
+}
+
+func ViewWikiPage(ctx *middleware.Context) {
+	wr := ctx.Repo.Repository.WikiRepo
+	if wr == nil {
+		ctx.HTML(200, WIKI_EMPTY)
+		return
+	}
+
+	p, err := models.GetWikiPage(wr, ctx.Params(":slug"))
+	if err != nil {
+		ctx.Handle(404, "wiki.ViewWikiPage", err)
+	}
+	ctx.Data["Page"] = p
+	ctx.HTML(200, WIKI_VIEW)
 }
 
 func CreateWikiPage(ctx *middleware.Context) {

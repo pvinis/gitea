@@ -453,7 +453,7 @@ func runWeb(ctx *cli.Context) {
 		m.Get("/milestone2/", repo.Milestones2)
 
 		m.Get("/wiki", repo.Wiki)
-//		m.Get("/wiki/:slug", repo.WikiPage)
+		m.Get("/wiki/:slug", repo.ViewWikiPage)
 
 		m.Group("", func() {
 			m.Get("/src/*", repo.Home)
