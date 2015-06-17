@@ -1007,6 +1007,7 @@ func GetRepositoryById(id int64) (*Repository, error) {
 func GetRepositories(uid int64, private bool) ([]*Repository, error) {
 	repos := make([]*Repository, 0, 10)
 	sess := x.Desc("updated")
+	sess.Where("is_wiki = 0")
 	if !private {
 		sess.Where("is_private=?", false)
 	}

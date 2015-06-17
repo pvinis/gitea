@@ -7,9 +7,15 @@
             <p class="panel-header">
                 <i class="icon fa fa-book fa-lg"></i>
                 <strong class="file-name">{{.Page.Title}}</strong>
+                <span class="action right">
+                    <a href="#" class="edit-comment"><i class="octicon octicon-pencil"></i></a>
+                    <a href="#" data-id="1" class="remove-comment"><i
+                            class="octicon octicon-x"></i></a>
+                </span>
             </p>
+
             <div class="panel-content markdown code-view" id="repo-code-view">
-                {{.Page.Content}}
+                {{.FileContent | Str2html}}
             </div>
         </div>
     </div>

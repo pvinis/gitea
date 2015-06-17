@@ -33,6 +33,7 @@ func Wiki(ctx *middleware.Context) {
 		ctx.Handle(500, "wiki.Wiki", err)
 	}
 	ctx.Data["Page"] = p
+	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.RepoLink))
 	ctx.HTML(200, WIKI_VIEW)
 }
 
@@ -48,6 +49,7 @@ func ViewWikiPage(ctx *middleware.Context) {
 		ctx.Handle(404, "wiki.ViewWikiPage", err)
 	}
 	ctx.Data["Page"] = p
+	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.RepoLink))
 	ctx.HTML(200, WIKI_VIEW)
 }
 
@@ -103,7 +105,6 @@ func CreateWikiPagePost(ctx *middleware.Context, form auth.CreateWikiPageForm) {
 		return
 	}
 
-	fmt.Println(form)
 	if !ctx.Repo.IsOwner() {
 		send(401, nil, errors.New(ctx.Tr("wiki.rights")))
 		return

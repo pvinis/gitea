@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"errors"
 	"io/ioutil"
-	"path/filepath"
 	"os"
+	"path/filepath"
+	"strings"
+	"time"
 
+	"github.com/go-gitea/gitea/modules/log"
 	"github.com/go-gitea/gitea/modules/process"
 
 	"github.com/kennygrant/sanitize"
-	"strings"
 )
 
 type WikiPage struct {
@@ -113,4 +115,27 @@ func GetWikiPage(r *Repository, a string) (*WikiPage, error) {
 	p.Title = strings.Title(strings.Replace(p.Alias, "-", "", -1))
 
 	return p, nil
+}
+
+func WikiUpdate() {
+	if err := x.Where("is_wiki = 1").Iterate(new(Repository), func(idx int, bean interface{}) error {
+		r := bean.(*Repository)
+
+		wikiRepoPath, err := r.WikiRepoPath()
+		if err != nil {
+			return err
+		}
+
+		if _, stderr, err := process.ExecDir(10*time.Minute,
+			wikiRepoPath, fmt.Sprintf("WikiUpdate: %s", wikiRepoPath),
+			"git", "pull"); err != nil {
+			desc := fmt.Sprintf("Fail to update wiki repository(%s): %s", wikiRepoPath, stderr)
+			log.Error(4, desc)
+			return nil
+		}
+
+		return nil
+	}); err != nil {
+		log.Error(4, "WikiUpdate: %v", err)
+	}
 }
