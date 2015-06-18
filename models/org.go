@@ -491,7 +491,10 @@ func (t *Team) addRepository(e Engine, repo *Repository) (err error) {
 		return err
 	}
 
-	t.NumRepos++
+	if !repo.IsWiki {
+		t.NumRepos++
+	}
+
 	if _, err = e.Id(t.ID).AllCols().Update(t); err != nil {
 		return fmt.Errorf("update team: %v", err)
 	}
@@ -537,7 +540,10 @@ func (t *Team) removeRepository(e Engine, repo *Repository, recalculate bool) (e
 		return err
 	}
 
-	t.NumRepos--
+	if !repo.IsWiki {
+		t.NumRepos--
+	}
+
 	if _, err = e.Id(t.ID).AllCols().Update(t); err != nil {
 		return err
 	}

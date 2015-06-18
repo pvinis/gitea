@@ -584,13 +584,13 @@ func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMi
 
 	if _, err = sess.Insert(repo); err != nil {
 		return nil, err
-	} else if _, err = sess.Exec("UPDATE `user` SET num_repos = num_repos + 1 WHERE id = ?", u.Id); err != nil {
-		return nil, err
 	} else if isWiki {
 		_, err = sess.Exec("UPDATE `repository` SET wiki_repo_id = ? WHERE id = ?", repo.Id, wikiForRepoID);
 		if err != nil {
 			return nil, err
 		}
+	} else if _, err = sess.Exec("UPDATE `user` SET num_repos = num_repos + 1 WHERE id = ?", u.Id); err != nil {
+		return nil, err
 	}
 
 	// TODO fix code for mirrors?
@@ -1007,7 +1007,7 @@ func GetRepositoryById(id int64) (*Repository, error) {
 func GetRepositories(uid int64, private bool) ([]*Repository, error) {
 	repos := make([]*Repository, 0, 10)
 	sess := x.Desc("updated")
-	sess.Where("is_wiki = 0")
+	sess.Where("is_wiki=?", false)
 	if !private {
 		sess.Where("is_private=?", false)
 	}
@@ -1018,7 +1018,7 @@ func GetRepositories(uid int64, private bool) ([]*Repository, error) {
 
 // GetRecentUpdatedRepositories returns the list of repositories that are recently updated.
 func GetRecentUpdatedRepositories(num int) (repos []*Repository, err error) {
-	err = x.Where("is_private=?", false).Limit(num).Desc("updated").Find(&repos)
+	err = x.Where("is_private=?", false).Where("is_wiki=?", false).Limit(num).Desc("updated").Find(&repos)
 	return repos, err
 }
 

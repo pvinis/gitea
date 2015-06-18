@@ -6,12 +6,16 @@
         <div class="panel panel-radius" id="repo-wiki">
             <p class="panel-header">
                 <i class="icon fa fa-book fa-lg"></i>
-                <strong class="file-name">{{.i18n.Tr "repo.wiki.wiki" }}</strong>
+                <strong class="file-name">{{.i18n.Tr "repo.wiki.pagelist" }}</strong>
             </p>
             <div class="panel-content code-view" id="repo-wiki-view">
-                <p class="text-center">
-                    {{.i18n.Tr "repo.wiki.empty_message" $.RepoLink "wiki/new" | Str2html }}
-                </p>
+                <ul>
+                    {{range .Pagelist}}
+                    <li>
+                        <a href="{{$.RepoLink}}/wiki/{{.Alias}}">{{.Title}}</a>
+                    </li>
+                    {{end}}
+                </ul>
             </div>
         </div>
     </div>

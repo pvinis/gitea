@@ -1,16 +1,15 @@
 {{template "ng/base/head" .}}
 {{template "ng/base/header" .}}
 <div id="repo-wrapper">
-    {{template "repo/header" .}}
+    {{template "repo/wiki/header" .}}
     <div id="repo-content" class="clear container">
         <div class="panel panel-radius" id="repo-wiki">
             <p class="panel-header">
                 <i class="icon fa fa-book fa-lg"></i>
-                <strong class="file-name">{{.Title}}</strong>
+                <strong class="file-name">{{.i18n.Tr "repo.wiki.wiki" }}</strong>
             </p>
-            <div class="panel-content markdown code-view" id="repo-code-view">
-                <div id="test" class="anchor-wrap"><h1>test<a class="anchor" href="#test"><span
-                        class="octicon octicon-link"></span></a></h1></div>
+            <div class="panel-content code-view markdown" id="repo-wiki-view">
+                <pre class="prettyprint prettyprinted"><code>$ git clone {{.WikiRepo.CloneLink.HTTPS}}</code></pre>
             </div>
         </div>
     </div>

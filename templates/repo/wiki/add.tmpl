@@ -1,7 +1,7 @@
 {{template "ng/base/head" .}}
 {{template "ng/base/header" .}}
 <div id="repo-wrapper">
-    {{template "repo/header" .}}
+    {{template "repo/wiki/header" .}}
     <form class="form panel panel-radius" action="{{.RepoLink}}/wiki/new" method="post" id="wiki-page-create-form">
         {{.CsrfTokenHtml}}
         <div class="panel-header">

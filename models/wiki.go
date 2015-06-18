@@ -47,23 +47,21 @@ func (p *WikiPage) create(u *User) error {
 	repoPath, err := p.Repo.RepoPath()
 	repoRealPath, err := p.Repo.WikiRepoPath()
 
+	var stderr string
 
 	f, err := os.Open(repoRealPath)
 	if err != nil {
-//	if os.IsNotExist(repoRealPath) {
-//		return nil, err
-//	}
 		userDir := filepath.Join(repoRealPath, "../")
 		os.MkdirAll(userDir, os.ModePerm)
+
+		_, stderr, err := process.Exec(
+			fmt.Sprintf("WikiPage create(git clone): %s", repoPath),
+			"git", "clone", repoPath, repoRealPath)
+		if err != nil {
+			return errors.New("git clone: " + stderr)
+		}
 	}
 	f.Close()
-
-	_, stderr, err := process.Exec(
-		fmt.Sprintf("WikiPage create(git clone): %s", repoPath),
-		"git", "clone", repoPath, repoRealPath)
-	if err != nil {
-		return errors.New("git clone: " + stderr)
-	}
 
 	filename := sanitize.Path(p.Title)
 	if err := ioutil.WriteFile(filepath.Join(repoRealPath, fmt.Sprintf("%s.md", filename)),
@@ -128,7 +126,7 @@ func WikiUpdate() {
 
 		if _, stderr, err := process.ExecDir(10*time.Minute,
 			wikiRepoPath, fmt.Sprintf("WikiUpdate: %s", wikiRepoPath),
-			"git", "pull"); err != nil {
+			"git", "pull", "origin", "master"); err != nil {
 			desc := fmt.Sprintf("Fail to update wiki repository(%s): %s", wikiRepoPath, stderr)
 			log.Error(4, desc)
 			return nil

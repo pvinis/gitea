@@ -1091,8 +1091,7 @@ function initWikiCreatePage(editor) {
             method: "post",
             success: function (json) {
                 if (json.ok && json.data.length) {
-                    window.location.href = json.data;
-                    location.reload();
+                    document.location.href = json.data;
                 } else {
                     $('#submit-error').html(json.error);
                 }

@@ -9,13 +9,16 @@ import (
 	"github.com/go-gitea/gitea/modules/base"
 	"github.com/go-gitea/gitea/modules/log"
 	"github.com/go-gitea/gitea/modules/middleware"
+	"path/filepath"
+	"strings"
 )
 
 const (
-	WIKI       base.TplName = "repo/wiki/home"
-	WIKI_EMPTY base.TplName = "repo/wiki/empty"
-	WIKI_ADD   base.TplName = "repo/wiki/add"
-	WIKI_VIEW  base.TplName = "repo/wiki/view"
+	WIKI_EMPTY     base.TplName = "repo/wiki/empty"
+	WIKI_ADD       base.TplName = "repo/wiki/add"
+	WIKI_VIEW      base.TplName = "repo/wiki/view"
+	WIKI_PAGELIST  base.TplName = "repo/wiki/pagelist"
+	WIKI_GIT       base.TplName = "repo/wiki/git"
 )
 
 func Wiki(ctx *middleware.Context) {
@@ -27,7 +30,6 @@ func Wiki(ctx *middleware.Context) {
 		return
 	}
 
-	// filepath.Glob(wr.WikiRepoPath() + "/*.md")
 	p, err := models.GetWikiPage(wr, "home")
 	if err != nil {
 		ctx.Handle(500, "wiki.Wiki", err)
@@ -123,4 +125,49 @@ func CreateWikiPagePost(ctx *middleware.Context, form auth.CreateWikiPageForm) {
 	}
 
 	send(200, fmt.Sprintf("%s/wiki/%s", ctx.Repo.RepoLink, p.Alias), nil)
+}
+
+func WikiPageList(ctx *middleware.Context) {
+	wr := ctx.Repo.Repository.WikiRepo
+	if wr == nil {
+		ctx.HTML(200, WIKI_EMPTY)
+		return
+	}
+
+	wikiRepoPath, err := wr.WikiRepoPath()
+	if err != nil {
+		ctx.Handle(500, "wiki.WikiPageList", err)
+	}
+
+	filelist, err := filepath.Glob(wikiRepoPath + "/*.md")
+	if err != nil {
+		ctx.Handle(500, "wiki.WikiPageList", err)
+	}
+
+	pagelist := make([]models.WikiPage, 0)
+	for _, p := range filelist {
+		// A little bit of ugly code
+		page := strings.Split(filepath.Base(p), ".")
+		ptitle := strings.Replace(page[0], "-", " ", -1)
+		pagelist = append(pagelist, models.WikiPage{
+			Alias: page[0],
+			Title: strings.Title(ptitle),
+			Repo:  wr,
+		})
+	}
+
+	ctx.Data["Pagelist"] = pagelist
+	ctx.HTML(200, WIKI_PAGELIST)
+}
+
+func WikiGit(ctx *middleware.Context) {
+	wr := ctx.Repo.Repository.WikiRepo
+	if wr == nil {
+		ctx.HTML(200, WIKI_EMPTY)
+		return
+	}
+
+	ctx.Data["WikiRepo"] = wr
+	ctx.Data["PageIsGit"] = true
+	ctx.HTML(200, WIKI_GIT)
 }
