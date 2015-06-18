@@ -2270,11 +2270,6 @@ textarea#commit-add-content {
 #milestone-new > a {
   padding: 0 !important;
 }
-#issue-new > a button,
-#label-new > a button,
-#milestone-new > a button {
-  height: 29px;
-}
 #issue-list-menu {
   padding: 16px 0 12px 0;
   border-bottom: 1px solid #BBB;
