@@ -1041,6 +1041,9 @@ $(document).ready(function () {
         editor.render();
         initWikiCreatePage(editor);
     }
+    if ($('#repo-wiki').length) {
+        initWikiPage();
+    }
 
     $('#dashboard-sidebar-menu').tabs();
     $('#pull-issue-preview').markdown_preview(".issue-add-comment");
@@ -1078,6 +1081,15 @@ function homepage() {
 String.prototype.endsWith = function (suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
+
+function initWikiPage() {
+    $('.remove-wiki-page').click(function () {
+        if (confirm('Are you sure?')) {
+            return true;
+        }
+        return false;
+    });
+}
 
 function initWikiCreatePage(editor) {
     $('#wiki-page-create-form').submit(function () {

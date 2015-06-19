@@ -429,6 +429,8 @@ func runWeb(ctx *cli.Context) {
 		m.Post("/comment/:action", repo.Comment)
 
 		m.Get("/wiki/new", repo.CreateWikiPage)
+		m.Get("/wiki/:slug/edit", repo.EditWikiPage)
+		m.Get("/wiki/:slug/remove", repo.WikiPageRemove)
 		m.Post("/wiki/new", bindIgnErr(auth.CreateWikiPageForm{}), repo.CreateWikiPagePost)
 
 		m.Group("/releases", func() {

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-gitea/gitea/modules/git"
 	"github.com/go-gitea/gitea/modules/log"
 	"github.com/go-gitea/gitea/modules/process"
 
@@ -35,7 +36,7 @@ func NewWikiPage(p *WikiPage, r *Repository, u *User) error {
 		}
 	}
 
-	err = p.create(u)
+	err = p.update(u)
 	if err != nil {
 		return err
 	}
@@ -43,11 +44,9 @@ func NewWikiPage(p *WikiPage, r *Repository, u *User) error {
 	return nil
 }
 
-func (p *WikiPage) create(u *User) error {
+func (p *WikiPage) update(u *User) error {
 	repoPath, err := p.Repo.RepoPath()
 	repoRealPath, err := p.Repo.WikiRepoPath()
-
-	var stderr string
 
 	f, err := os.Open(repoRealPath)
 	if err != nil {
@@ -64,33 +63,72 @@ func (p *WikiPage) create(u *User) error {
 	f.Close()
 
 	filename := sanitize.Path(p.Title)
-	if err := ioutil.WriteFile(filepath.Join(repoRealPath, fmt.Sprintf("%s.md", filename)),
+
+	fp := filepath.Join(repoRealPath, fmt.Sprintf("%s.md", filename))
+	f, err = os.Open(fp)
+	commitMsg := "Edit"
+	if err != nil {
+		commitMsg = "Create"
+	}
+	f.Close()
+
+	if err := ioutil.WriteFile(fp,
 		[]byte(p.Content), 0644); err != nil {
 		return err
 	}
+
 	p.Alias = filename
 
+	if err = p.commitChanges(repoRealPath, commitMsg, u.NewGitSig()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *WikiPage) Delete(u *User) error {
+	wikiRepoPath, err := p.Repo.WikiRepoPath()
+	if err != nil {
+		return err
+	}
+
+	if err = os.Remove(fmt.Sprintf("%s/%s.md", wikiRepoPath, p.Alias)); err != nil {
+		return err
+	}
+
+	if err = p.commitChanges(wikiRepoPath, "Delete", u.NewGitSig()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *WikiPage) commitChanges(repoRealPath, commitMsg string, sig *git.Signature) error {
+	var (
+		stderr string
+		err    error
+	)
+
 	if _, stderr, err = process.ExecDir(-1,
-		repoRealPath, fmt.Sprintf("initRepoCommit(git add): %s", repoRealPath),
+		repoRealPath, fmt.Sprintf("WikiPage.create(git add): %s", repoRealPath),
 		"git", "add", "--all"); err != nil {
 		return errors.New("git add: " + stderr)
 	}
 
-	sig := u.NewGitSig()
 	if _, stderr, err = process.ExecDir(-1,
-		repoRealPath, fmt.Sprintf("initRepoCommit(git commit): %s", repoRealPath),
+		repoRealPath, fmt.Sprintf("WikiPage.create(git commit): %s", repoRealPath),
 		"git", "commit", fmt.Sprintf("--author='%s <%s>'", sig.Name, sig.Email),
-		"-m", fmt.Sprintf("Create page %s", p.Title)); err != nil {
+		"-m", fmt.Sprintf("%s page %s", commitMsg, p.Title)); err != nil {
 		return errors.New("git commit: " + stderr)
 	}
 
 	if _, stderr, err = process.ExecDir(-1,
-		repoRealPath, fmt.Sprintf("initRepoCommit(git push): %s", repoRealPath),
+		repoRealPath, fmt.Sprintf("WikiPage.create(git push): %s", repoRealPath),
 		"git", "push", "origin", "master"); err != nil {
 		return errors.New("git push: " + stderr)
 	}
 
-	return nil
+	return err
 }
 
 func GetWikiPage(r *Repository, a string) (*WikiPage, error) {

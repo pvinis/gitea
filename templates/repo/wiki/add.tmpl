@@ -5,7 +5,7 @@
     <form class="form panel panel-radius" action="{{.RepoLink}}/wiki/new" method="post" id="wiki-page-create-form">
         {{.CsrfTokenHtml}}
         <div class="panel-header">
-            {{if .PageTitle}}
+            {{if or .PageTitle}}
                 <h2>{{.PageTitle}}</h2>
                 <input type="hidden" name="title" value="{{.PageTitle}}">
             {{else}}
@@ -16,7 +16,7 @@
         <div class="panel-content">
             {{template "ng/base/alert" .}}
             <div class="field clear">
-                <textarea class="ipt ipt-large ipt-radius {{if .Err_PageContent}}ipt-error{{end}}" id="page-content" name="content">{{.content}}</textarea>
+                <textarea class="ipt ipt-large ipt-radius {{if .Err_PageContent}}ipt-error{{end}}" id="page-content" name="content">{{.Page.Content}}</textarea>
             </div>
             <div class="field">
                 <button class="btn btn-large btn-blue btn-radius">{{.i18n.Tr "repo.wiki.create_page"}}</button>

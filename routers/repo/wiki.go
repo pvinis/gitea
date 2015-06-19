@@ -3,14 +3,14 @@ package repo
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
+	"strings"
 
 	"github.com/go-gitea/gitea/models"
 	"github.com/go-gitea/gitea/modules/auth"
 	"github.com/go-gitea/gitea/modules/base"
 	"github.com/go-gitea/gitea/modules/log"
 	"github.com/go-gitea/gitea/modules/middleware"
-	"path/filepath"
-	"strings"
 )
 
 const (
@@ -30,11 +30,17 @@ func Wiki(ctx *middleware.Context) {
 		return
 	}
 
+	canWrite, err := models.HasAccess(ctx.User, wr, models.ACCESS_MODE_WRITE)
+	if err != nil {
+		ctx.Handle(500, "wiki.Wiki", err)
+	}
+
 	p, err := models.GetWikiPage(wr, "home")
 	if err != nil {
 		ctx.Handle(500, "wiki.Wiki", err)
 	}
 	ctx.Data["Page"] = p
+	ctx.Data["CanWrite"] = canWrite
 	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.RepoLink))
 	ctx.HTML(200, WIKI_VIEW)
 }
@@ -50,7 +56,14 @@ func ViewWikiPage(ctx *middleware.Context) {
 	if err != nil {
 		ctx.Handle(404, "wiki.ViewWikiPage", err)
 	}
+
+	canWrite, err := models.HasAccess(ctx.User, wr, models.ACCESS_MODE_WRITE)
+	if err != nil {
+		ctx.Handle(500, "wiki.Wiki", err)
+	}
+
 	ctx.Data["Page"] = p
+	ctx.Data["CanWrite"] = canWrite
 	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.RepoLink))
 	ctx.HTML(200, WIKI_VIEW)
 }
@@ -61,17 +74,40 @@ func CreateWikiPage(ctx *middleware.Context) {
 		ctx.Data["PageTitle"] = "Home"
 	}
 
-	_, err := ctx.Repo.Repository.GetCollaborators()
+	canWrite, err := models.HasAccess(ctx.User, wr, models.ACCESS_MODE_WRITE)
 	if err != nil {
-		ctx.Handle(400, "wiki.CreateWikiPage", err)
-		return
+		ctx.Handle(500, "wiki.CreateWikiPage", err)
 	}
 
-	if !ctx.Repo.IsOwner() {
+	if !canWrite {
 		ctx.Handle(401, "wiki.CreateWikiPage", errors.New(ctx.Tr("wiki.rights")))
-		return
 	}
 
+	ctx.HTML(200, WIKI_ADD)
+}
+
+func EditWikiPage(ctx *middleware.Context) {
+	wr := ctx.Repo.Repository.WikiRepo
+	if wr == nil {
+		ctx.Data["PageTitle"] = "Home"
+	}
+
+	p, err := models.GetWikiPage(wr, ctx.Params(":slug"))
+	if err != nil {
+		ctx.Handle(404, "wiki.ViewWikiPage", err)
+	}
+
+	canWrite, err := models.HasAccess(ctx.User, wr, models.ACCESS_MODE_WRITE)
+	if err != nil {
+		ctx.Handle(500, "wiki.EditWikiPage", err)
+	}
+
+	if !canWrite {
+		ctx.Handle(401, "wiki.EditWikiPage", errors.New(ctx.Tr("wiki.rights")))
+	}
+
+	ctx.Data["Page"] = p
+	ctx.Data["PageTitle"] = p.Title
 	ctx.HTML(200, WIKI_ADD)
 }
 
@@ -107,7 +143,13 @@ func CreateWikiPagePost(ctx *middleware.Context, form auth.CreateWikiPageForm) {
 		return
 	}
 
-	if !ctx.Repo.IsOwner() {
+	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository.WikiRepo, models.ACCESS_MODE_WRITE)
+	if err != nil {
+		send(500, nil, err)
+		return
+	}
+
+	if !canWrite {
 		send(401, nil, errors.New(ctx.Tr("wiki.rights")))
 		return
 	}
@@ -146,7 +188,9 @@ func WikiPageList(ctx *middleware.Context) {
 
 	pagelist := make([]models.WikiPage, 0)
 	for _, p := range filelist {
-		// A little bit of ugly code
+		/**
+		 * A little piece of ugly code
+		 **/
 		page := strings.Split(filepath.Base(p), ".")
 		ptitle := strings.Replace(page[0], "-", " ", -1)
 		pagelist = append(pagelist, models.WikiPage{
@@ -170,4 +214,35 @@ func WikiGit(ctx *middleware.Context) {
 	ctx.Data["WikiRepo"] = wr
 	ctx.Data["PageIsGit"] = true
 	ctx.HTML(200, WIKI_GIT)
+}
+
+func WikiPageRemove(ctx *middleware.Context) {
+	wr := ctx.Repo.Repository.WikiRepo
+	if wr == nil {
+		ctx.Handle(404, "wiki.WikiPageDelete", errors.New("There is no wiki repo to delete page"))
+		return
+	}
+
+	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository.WikiRepo, models.ACCESS_MODE_WRITE)
+	if err != nil || !canWrite {
+		ctx.Handle(401, "wiki.WikiPageDelete", errors.New(ctx.Tr("wiki.rights")))
+		return
+	}
+
+	p := &models.WikiPage {
+		Alias: ctx.Params(":slug"),
+		Title: strings.Title(ctx.Params(":slug")),
+		Repo:  ctx.Repo.Repository.WikiRepo,
+	}
+
+	if err := p.Delete(ctx.User); err != nil {
+		ctx.Handle(500, "wiki.WikiPageDelete", err)
+	}
+
+	repoLink, err := ctx.Repo.Repository.RepoLink()
+	if err != nil {
+		ctx.Handle(500, "wiki.WikiPageDelete", err)
+	}
+
+	ctx.Redirect(repoLink + "/wiki")
 }
