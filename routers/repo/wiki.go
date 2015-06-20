@@ -217,15 +217,33 @@ func WikiGit(ctx *middleware.Context) {
 }
 
 func WikiPageRemove(ctx *middleware.Context) {
+	send := func(status int, err error) {
+		if err != nil {
+			log.Error(4, "wiki.WikiPageRemove(?): %s", err)
+
+			ctx.JSON(status, map[string]interface{}{
+				"ok":     false,
+				"status": status,
+				"error":  err.Error(),
+			})
+		} else {
+			ctx.JSON(status, map[string]interface{}{
+				"ok":     true,
+				"status": status,
+			})
+		}
+	}
+
 	wr := ctx.Repo.Repository.WikiRepo
 	if wr == nil {
-		ctx.Handle(404, "wiki.WikiPageDelete", errors.New("There is no wiki repo to delete page"))
+		send(404, errors.New("There is no wiki repo to delete page"))
 		return
 	}
 
+	fmt.Println(ctx.User)
 	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository.WikiRepo, models.ACCESS_MODE_WRITE)
 	if err != nil || !canWrite {
-		ctx.Handle(401, "wiki.WikiPageDelete", errors.New(ctx.Tr("wiki.rights")))
+		send(401, errors.New(ctx.Tr("wiki.rights")))
 		return
 	}
 
@@ -236,13 +254,8 @@ func WikiPageRemove(ctx *middleware.Context) {
 	}
 
 	if err := p.Delete(ctx.User); err != nil {
-		ctx.Handle(500, "wiki.WikiPageDelete", err)
+		send(500, err)
 	}
 
-	repoLink, err := ctx.Repo.Repository.RepoLink()
-	if err != nil {
-		ctx.Handle(500, "wiki.WikiPageDelete", err)
-	}
-
-	ctx.Redirect(repoLink + "/wiki")
+	send(200, nil)
 }

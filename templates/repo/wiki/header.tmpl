@@ -7,11 +7,7 @@
             <a {{if .Pagelist}}class="current"{{end}} href="{{$.RepoLink}}/wiki/pages"><i class="octicon octicon-issue-opened"></i>{{.i18n.Tr "repo.wiki.pagelist" }}</a>
         </li>
         <li class="right">
-            {{if .Page.Title}}
-            <a class="current" href="{{$.RepoLink}}/wiki/{{.Page.Alias}}"><i class="octicon octicon-repo"></i>{{.Page.Title}}</a>
-            {{else}}
-            <a href="{{$.RepoLink}}/wiki"><i class="octicon octicon-repo"></i>{{.i18n.Tr "repo.wiki.wiki" }}</a>
-            {{end}}
+            <a {{if .Page.Title}}class="current"{{end}} href="{{$.RepoLink}}/wiki"><i class="octicon octicon-repo"></i>{{.i18n.Tr "repo.wiki.wiki" }}</a>
         </li>
     </ul>
     <div class="container clear">

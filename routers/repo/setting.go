@@ -134,6 +134,16 @@ func SettingsPost(ctx *middleware.Context, form auth.RepoSettingForm) {
 			}
 			return
 		}
+
+		// Transfer wiki repo
+		if err = models.TransferOwnership(ctx.User, newOwner, ctx.Repo.Repository.WikiRepo); err != nil {
+			if err == models.ErrRepoAlreadyExist {
+				ctx.RenderWithErr(ctx.Tr("repo.settings.new_owner_has_same_repo"), SETTINGS_OPTIONS, nil)
+			} else {
+				ctx.Handle(500, "TransferOwnership", err)
+			}
+			return
+		}
 		log.Trace("Repository transfered: %s/%s -> %s", ctx.Repo.Owner.Name, ctx.Repo.Repository.Name, newOwner)
 		ctx.Flash.Success(ctx.Tr("repo.settings.transfer_succeed"))
 		ctx.Redirect(setting.AppSubUrl + "/")

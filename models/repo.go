@@ -791,6 +791,12 @@ func TransferOwnership(u *User, newOwnerName string, repo *Repository) error {
 		return fmt.Errorf("rename directory: %v", err)
 	}
 
+	if repo.IsWiki {
+		if err = os.Rename(WikiRepoPath(owner.Name, repo.Name), WikiRepoPath(newOwner.Name, repo.Name)); err != nil {
+			return fmt.Errorf("rename wiki directory: %v", err)
+		}
+	}
+
 	return sess.Commit()
 }
 

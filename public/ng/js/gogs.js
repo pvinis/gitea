@@ -1085,7 +1085,22 @@ String.prototype.endsWith = function (suffix) {
 function initWikiPage() {
     $('.remove-wiki-page').click(function () {
         if (confirm('Are you sure?')) {
-            return true;
+            var wiki = document.location.href.match(/([a-zA-Z0-9.:\/\/]+)\/wiki\/([a-z0-9]+)/);
+            var url = wiki[0] + '/remove';
+            var redirectUrl = wiki[1] + '/wiki';
+            $.ajax({
+                url: url,
+                data: {comment: $(this).data('id')},
+                dataType: 'json',
+                method: 'post',
+                success: function (json) {
+                    if (json.ok) {
+                        document.location.href = redirectUrl;
+                    } else {
+                        alert(json.error);
+                    }
+                }
+            });
         }
         return false;
     });
