@@ -126,17 +126,23 @@ func SettingsPost(ctx *middleware.Context, form auth.RepoSettingForm) {
 			return
 		}
 
-		if err = models.TransferOwnership(ctx.User, newOwner, ctx.Repo.Repository); err != nil {
-			if err == models.ErrRepoAlreadyExist {
-				ctx.RenderWithErr(ctx.Tr("repo.settings.new_owner_has_same_repo"), SETTINGS_OPTIONS, nil)
-			} else {
-				ctx.Handle(500, "TransferOwnership", err)
+		// Transfer wiki repo
+		err = ctx.Repo.Repository.WikiRepo.GetOwner()
+		if err != nil {
+			ctx.Handle(500, "WikiRepo.GetOwner", err)
+		}
+		if ctx.Repo.Repository.WikiRepo != nil {
+			if err = models.TransferOwnership(ctx.User, newOwner, ctx.Repo.Repository.WikiRepo); err != nil {
+				if err == models.ErrRepoAlreadyExist {
+					ctx.RenderWithErr(ctx.Tr("repo.settings.new_owner_has_same_repo"), SETTINGS_OPTIONS, nil)
+				} else {
+					ctx.Handle(500, "TransferOwnership", err)
+				}
+				return
 			}
-			return
 		}
 
-		// Transfer wiki repo
-		if err = models.TransferOwnership(ctx.User, newOwner, ctx.Repo.Repository.WikiRepo); err != nil {
+		if err = models.TransferOwnership(ctx.User, newOwner, ctx.Repo.Repository); err != nil {
 			if err == models.ErrRepoAlreadyExist {
 				ctx.RenderWithErr(ctx.Tr("repo.settings.new_owner_has_same_repo"), SETTINGS_OPTIONS, nil)
 			} else {
@@ -172,6 +178,12 @@ func SettingsPost(ctx *middleware.Context, form auth.RepoSettingForm) {
 		if err := models.DeleteRepository(ctx.Repo.Owner.Id, ctx.Repo.Repository.Id, ctx.Repo.Owner.Name); err != nil {
 			ctx.Handle(500, "DeleteRepository", err)
 			return
+		}
+		if ctx.Repo.Repository.WikiRepoId > 0 {
+			if err := models.DeleteRepository(ctx.Repo.Owner.Id, ctx.Repo.Repository.WikiRepoId, ctx.Repo.Owner.Name); err != nil {
+				ctx.Handle(500, "DeleteRepository", err)
+				return
+			}
 		}
 		log.Trace("Repository deleted: %s/%s", ctx.Repo.Owner.Name, ctx.Repo.Repository.Name)
 		if ctx.Repo.Owner.IsOrganization() {

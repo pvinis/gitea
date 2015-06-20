@@ -792,6 +792,12 @@ func TransferOwnership(u *User, newOwnerName string, repo *Repository) error {
 	}
 
 	if repo.IsWiki {
+		wikiRepoRealPath := filepath.Join(WikiRepoPath(newOwner.Name, repo.Name), "/../")
+		f, err := os.Open(wikiRepoRealPath)
+		if err != nil {
+			os.MkdirAll(wikiRepoRealPath, os.ModePerm)
+		}
+		f.Close()
 		if err = os.Rename(WikiRepoPath(owner.Name, repo.Name), WikiRepoPath(newOwner.Name, repo.Name)); err != nil {
 			return fmt.Errorf("rename wiki directory: %v", err)
 		}
@@ -952,6 +958,17 @@ func DeleteRepository(uid, repoID int64, userName string) error {
 		log.Warn(desc)
 		if err = CreateRepositoryNotice(desc); err != nil {
 			log.Error(4, "add notice: %v", err)
+		}
+	}
+
+	// Remove wiki repository files.
+	if repo.IsWiki {
+		if err = os.RemoveAll(WikiRepoPath(userName, repo.Name)); err != nil {
+			desc := fmt.Sprintf("delete wiki repository files(%s/%s): %v", userName, repo.Name, err)
+			log.Warn(desc)
+			if err = CreateRepositoryNotice(desc); err != nil {
+				log.Error(4, "add notice: %v", err)
+			}
 		}
 	}
 

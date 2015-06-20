@@ -74,7 +74,7 @@ func CreateWikiPage(ctx *middleware.Context) {
 		ctx.Data["PageTitle"] = "Home"
 	}
 
-	canWrite, err := models.HasAccess(ctx.User, wr, models.ACCESS_MODE_WRITE)
+	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository, models.ACCESS_MODE_WRITE)
 	if err != nil {
 		ctx.Handle(500, "wiki.CreateWikiPage", err)
 	}
@@ -97,7 +97,7 @@ func EditWikiPage(ctx *middleware.Context) {
 		ctx.Handle(404, "wiki.ViewWikiPage", err)
 	}
 
-	canWrite, err := models.HasAccess(ctx.User, wr, models.ACCESS_MODE_WRITE)
+	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository, models.ACCESS_MODE_WRITE)
 	if err != nil {
 		ctx.Handle(500, "wiki.EditWikiPage", err)
 	}
@@ -143,7 +143,7 @@ func CreateWikiPagePost(ctx *middleware.Context, form auth.CreateWikiPageForm) {
 		return
 	}
 
-	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository.WikiRepo, models.ACCESS_MODE_WRITE)
+	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository, models.ACCESS_MODE_WRITE)
 	if err != nil {
 		send(500, nil, err)
 		return
@@ -241,7 +241,7 @@ func WikiPageRemove(ctx *middleware.Context) {
 	}
 
 	fmt.Println(ctx.User)
-	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository.WikiRepo, models.ACCESS_MODE_WRITE)
+	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository, models.ACCESS_MODE_WRITE)
 	if err != nil || !canWrite {
 		send(401, errors.New(ctx.Tr("wiki.rights")))
 		return
