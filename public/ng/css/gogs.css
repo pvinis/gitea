@@ -2852,3 +2852,13 @@ textarea#commit-add-content {
 #wiki-page-create-cancel {
   margin-left: 1em;
 }
+#dashboard-header > .menu-line > li #new-wiki-page {
+  margin: 7px 20px 0 0;
+}
+.wiki-page-list {
+  font-size: 17px;
+}
+.wiki-page-list ul {
+  width: 100%;
+  list-style: none;
+}

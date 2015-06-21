@@ -1104,6 +1104,11 @@ function initWikiPage() {
         }
         return false;
     });
+
+    $("#new-wiki-page").click(function () {
+        var wiki = document.location.href.match(/([a-zA-Z0-9.:\/\/]+)\/wiki([\/a-z0-9]{0,})/);
+        document.location.href = wiki[1] + "/wiki/new";
+    });
 }
 
 function initWikiCreatePage(editor) {

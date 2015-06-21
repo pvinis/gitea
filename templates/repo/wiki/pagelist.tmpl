@@ -8,11 +8,12 @@
                 <i class="icon fa fa-book fa-lg"></i>
                 <strong class="file-name">{{.i18n.Tr "repo.wiki.pagelist" }}</strong>
             </p>
-            <div class="panel-content code-view" id="repo-wiki-view">
+            <div class="panel-content code-view wiki-page-list" id="repo-wiki-view">
                 <ul>
                     {{range .Pagelist}}
                     <li>
                         <a href="{{$.RepoLink}}/wiki/{{.Alias}}">{{.Title}}</a>
+                        <hr>
                     </li>
                     {{end}}
                 </ul>
