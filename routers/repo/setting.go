@@ -70,8 +70,16 @@ func SettingsPost(ctx *middleware.Context, form auth.RepoSettingForm) {
 				return
 			}
 			if ctx.Repo.Repository.WikiRepo != nil {
-				if err := models.ChangeRepositoryName(ctx.Repo.Owner, ctx.Repo.Repository.WikiRepo.Name, newRepoName + ".wiki", true); err != nil {
+				newWikiRepoName := newRepoName + ".wiki"
+				if err := models.ChangeRepositoryName(ctx.Repo.Owner, ctx.Repo.Repository.WikiRepo.Name, newWikiRepoName, true); err != nil {
 					ctx.Handle(500, "ChangeRepositoryName", err)
+				}
+				ctx.Repo.Repository.WikiRepo.Name = newWikiRepoName
+				ctx.Repo.Repository.WikiRepo.LowerName = strings.ToLower(newWikiRepoName)
+
+				if err := models.UpdateRepository(ctx.Repo.Repository.WikiRepo, ctx.Repo.Repository.IsPrivate != form.Private); err != nil {
+					ctx.Handle(404, "UpdateRepository", err)
+					return
 				}
 			}
 			log.Trace("Repository name changed: %s/%s -> %s", ctx.Repo.Owner.Name, ctx.Repo.Repository.Name, newRepoName)
