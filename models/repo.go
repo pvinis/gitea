@@ -807,7 +807,7 @@ func TransferOwnership(u *User, newOwnerName string, repo *Repository) error {
 }
 
 // ChangeRepositoryName changes all corresponding setting from old repository name to new one.
-func ChangeRepositoryName(u *User, oldRepoName, newRepoName string) (err error) {
+func ChangeRepositoryName(u *User, oldRepoName, newRepoName string, isWiki bool) (err error) {
 	oldRepoName = strings.ToLower(oldRepoName)
 	newRepoName = strings.ToLower(newRepoName)
 	if err = IsUsableName(newRepoName); err != nil {
@@ -821,6 +821,13 @@ func ChangeRepositoryName(u *User, oldRepoName, newRepoName string) (err error) 
 		return ErrRepoAlreadyExist
 	}
 
+	// Change wiki repository directory name.
+	if isWiki {
+		err = os.Rename(WikiRepoPath(u.LowerName, oldRepoName), WikiRepoPath(u.LowerName, newRepoName))
+		if err != nil {
+			return err
+		}
+	}
 	// Change repository directory name.
 	return os.Rename(RepoPath(u.LowerName, oldRepoName), RepoPath(u.LowerName, newRepoName))
 }

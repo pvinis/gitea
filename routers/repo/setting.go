@@ -53,7 +53,7 @@ func SettingsPost(ctx *middleware.Context, form auth.RepoSettingForm) {
 		newRepoName := form.RepoName
 		// Check if repository name has been changed.
 		if ctx.Repo.Repository.Name != newRepoName {
-			if err := models.ChangeRepositoryName(ctx.Repo.Owner, ctx.Repo.Repository.Name, newRepoName); err != nil {
+			if err := models.ChangeRepositoryName(ctx.Repo.Owner, ctx.Repo.Repository.Name, newRepoName, false); err != nil {
 				switch {
 				case err == models.ErrRepoAlreadyExist:
 					ctx.Data["Err_RepoName"] = true
@@ -68,6 +68,11 @@ func SettingsPost(ctx *middleware.Context, form auth.RepoSettingForm) {
 					ctx.Handle(500, "ChangeRepositoryName", err)
 				}
 				return
+			}
+			if ctx.Repo.Repository.WikiRepo != nil {
+				if err := models.ChangeRepositoryName(ctx.Repo.Owner, ctx.Repo.Repository.WikiRepo.Name, newRepoName + ".wiki", true); err != nil {
+					ctx.Handle(500, "ChangeRepositoryName", err)
+				}
 			}
 			log.Trace("Repository name changed: %s/%s -> %s", ctx.Repo.Owner.Name, ctx.Repo.Repository.Name, newRepoName)
 			ctx.Repo.Repository.Name = newRepoName
