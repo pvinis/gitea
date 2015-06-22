@@ -7,7 +7,7 @@
             <a {{if .Pagelist}}class="current"{{end}} href="{{$.RepoLink}}/wiki/pages"><i class="octicon octicon-list-unordered"></i>{{.i18n.Tr "repo.wiki.pagelist" }}</a>
         </li>
         <li class="right">
-            <a {{if .Page.Title}}class="current"{{end}} href="{{$.RepoLink}}/wiki"><i class="octicon octicon-book"></i>{{.i18n.Tr "repo.wiki.wiki" }}</a>
+            <a {{if .Page.Title}}class="current"{{end}} href="{{$.RepoLink}}/wiki"><i class="octicon octicon-book"></i>Home</a>
         </li>
         <li class="right">
             <button class="btn btn-large btn-green btn-radius" id="new-wiki-page"><i class="octicon octicon-plus"></i>{{.i18n.Tr "repo.wiki.new_page" }}</button>
