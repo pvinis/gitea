@@ -1037,12 +1037,11 @@ func GetRepositoryById(id int64) (*Repository, error) {
 func GetRepositories(uid int64, private bool) ([]*Repository, error) {
 	repos := make([]*Repository, 0, 10)
 	sess := x.Desc("updated")
-	sess.Where("is_wiki=?", false)
 	if !private {
 		sess.Where("is_private=?", false)
 	}
 
-	err := sess.Find(&repos, &Repository{OwnerId: uid})
+	err := sess.Where("is_wiki=?", false).Find(&repos, &Repository{OwnerId: uid})
 	return repos, err
 }
 
@@ -1444,7 +1443,7 @@ func IsStaring(uid, repoId int64) bool {
 //  \___  / \____/|__|  |__|_ \
 //      \/                   \/
 
-func ForkRepository(u *User, oldRepo *Repository, name, desc string) (_ *Repository, err error) {
+func ForkRepository(u *User, oldRepo *Repository, name, desc string, wikiRepoId int64) (_ *Repository, err error) {
 	has, err := IsRepositoryExist(u, name)
 	if err != nil {
 		return nil, fmt.Errorf("IsRepositoryExist: %v", err)
@@ -1469,6 +1468,8 @@ func ForkRepository(u *User, oldRepo *Repository, name, desc string) (_ *Reposit
 		IsPrivate:   oldRepo.IsPrivate,
 		IsFork:      true,
 		ForkId:      oldRepo.Id,
+		IsWiki:      oldRepo.IsWiki,
+		WikiRepoId:  wikiRepoId,
 	}
 
 	sess := x.NewSession()
@@ -1520,6 +1521,16 @@ func ForkRepository(u *User, oldRepo *Repository, name, desc string) (_ *Reposit
 		"git", "clone", "--bare", oldRepoPath, repoPath)
 	if err != nil {
 		return nil, fmt.Errorf("git clone: %v", stderr)
+	}
+
+	if oldRepo.IsWiki {
+		wikiRepoPath := WikiRepoPath(u.Name, repo.Name)
+		_, stderr, err := process.ExecTimeout(10*time.Minute,
+			fmt.Sprintf("ForkRepository(copy wiki): %s/%s", u.Name, repo.Name),
+			"git", "clone", oldRepoPath, wikiRepoPath)
+		if err != nil {
+			return nil, fmt.Errorf("git clone: %v", stderr)
+		}
 	}
 
 	_, stderr, err = process.ExecDir(-1,

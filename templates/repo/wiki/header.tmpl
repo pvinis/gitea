@@ -19,8 +19,8 @@
             <a class="author" href="{{AppSubUrl}}/{{.Owner.Name}}">{{.Repository.Owner.Name}}</a>
             <span class="divider">/</span>
             <a class="repo text-bold" href="{{$.RepoLink}}">{{.Repository.Name}}</a>
-            {{if .IsMirror}}<span class="label label-gray">{{$.i18n.Tr "mirror"}}</span>{{end}}
-            {{if .IsFork}}<span class="fork-flag">forked from <a href="{{.Repository.ForkRepo.RepoLink}}">{{SubStr .Repository.ForkRepo.RepoLink 1 -1}}</a></span>{{end}}
+            {{if .Repository.IsMirror}}<span class="label label-gray">{{$.i18n.Tr "mirror"}}</span>{{end}}
+            {{if .Repository.IsFork}}<span class="fork-flag">forked from <a href="{{.Repository.ForkRepo.RepoLink}}">{{SubStr .Repository.ForkRepo.RepoLink 1 -1}}</a></span>{{end}}
         </h1>
     </div>
 </div>
