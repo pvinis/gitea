@@ -401,6 +401,11 @@ func ChangeUserName(u *User, newUserName string) (err error) {
 		return ErrUserAlreadyExist{newUserName}
 	}
 
+	err = os.Rename(WikiUserPath(u.LowerName), WikiUserPath(newUserName))
+	if err != nil {
+		return err
+	}
+
 	return os.Rename(UserPath(u.LowerName), UserPath(newUserName))
 }
 
@@ -536,6 +541,10 @@ func DeleteInactivateUsers() error {
 // UserPath returns the path absolute path of user repositories.
 func UserPath(userName string) string {
 	return filepath.Join(setting.RepoRootPath, strings.ToLower(userName))
+}
+// WikiUserPath returns the path absolute path of user wiki repositories.
+func WikiUserPath(userName string) string {
+	return filepath.Join(setting.RepoRootPath, ".wiki", strings.ToLower(userName))
 }
 
 func GetUserByKeyId(keyId int64) (*User, error) {

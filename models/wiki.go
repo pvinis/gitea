@@ -21,6 +21,7 @@ type WikiPage struct {
 	Alias    string
 	Content  string
 	Repo     *Repository
+	Commit   *git.Commit
 }
 
 func NewWikiPage(p *WikiPage, r *Repository, u *User) error {
@@ -148,7 +149,7 @@ func GetWikiPage(r *Repository, a string) (*WikiPage, error) {
 	}
 
 	p.Content = string(c)
-	p.Title = strings.Title(strings.Replace(p.Alias, "-", "", -1))
+	p.Title = strings.Title(strings.Replace(p.Alias, "-", " ", -1))
 
 	return p, nil
 }
@@ -175,3 +176,4 @@ func WikiUpdate() {
 		log.Error(4, "WikiUpdate: %v", err)
 	}
 }
+

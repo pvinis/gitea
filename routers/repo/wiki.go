@@ -9,6 +9,7 @@ import (
 	"github.com/go-gitea/gitea/models"
 	"github.com/go-gitea/gitea/modules/auth"
 	"github.com/go-gitea/gitea/modules/base"
+	"github.com/go-gitea/gitea/modules/git"
 	"github.com/go-gitea/gitea/modules/log"
 	"github.com/go-gitea/gitea/modules/middleware"
 )
@@ -186,17 +187,32 @@ func WikiPageList(ctx *middleware.Context) {
 		ctx.Handle(500, "wiki.WikiPageList", err)
 	}
 
-	pagelist := make([]models.WikiPage, 0)
+	pagelist := make([]*models.WikiPage, 0)
+	repoPath, err := wr.RepoPath()
+	if err != nil {
+		ctx.Handle(500, "wiki.WikiPageList", err)
+	}
+
+	wikiGitRepo, err := git.OpenRepository(repoPath)
+	if err != nil {
+		ctx.Handle(500, "wiki.WikiPageList", err)
+	}
 	for _, p := range filelist {
 		/**
 		 * A little piece of ugly code
 		 **/
+		commits, err := wikiGitRepo.CommitsByFileAndRange("master", filepath.Base(p), 0)
+		if err != nil {
+			ctx.Handle(500, "wiki.WikiPageList", err)
+		}
+
 		page := strings.Split(filepath.Base(p), ".")
 		ptitle := strings.Replace(page[0], "-", " ", -1)
-		pagelist = append(pagelist, models.WikiPage{
-			Alias: page[0],
-			Title: strings.Title(ptitle),
-			Repo:  wr,
+		pagelist = append(pagelist, &models.WikiPage{
+			Alias:  page[0],
+			Title:  strings.Title(ptitle),
+			Repo:   wr,
+			Commit: commits.Front().Value.(*git.Commit),
 		})
 	}
 

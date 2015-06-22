@@ -13,7 +13,11 @@
                     {{range .Pagelist}}
                     <li>
                         <a href="{{$.RepoLink}}/wiki/{{.Alias}}">{{.Title}}</a>
-                        <hr>
+                        <div class="right">
+                            <img class="avatar-16" src="{{AvatarLink .Commit.Author.Email}}" alt=""/>
+                            <a href="{{AppSubUrl}}/{{.Commit.Author.Name}}">{{.Commit.Author.Name}}</a>&nbsp;
+                            <span class="age">{{$.i18n.Tr "repo.wiki.edited" }} {{TimeSince .Commit.Author.When $.Lang}}</span>
+                        </div>
                     </li>
                     {{end}}
                 </ul>

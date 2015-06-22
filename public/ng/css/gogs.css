@@ -2862,3 +2862,19 @@ textarea#commit-add-content {
   width: 100%;
   list-style: none;
 }
+.wiki-page-list ul li {
+  border-bottom: 1px solid #EEE;
+  padding: 6px;
+}
+.wiki-page-list ul li:last-child {
+  border-bottom: none;
+}
+.wiki-page-list .right {
+  color: #888;
+}
+.wiki-page-list .right a {
+  font-size: 14px;
+}
+.wiki-page-list .right span {
+  font-size: 12px;
+}
