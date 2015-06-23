@@ -447,6 +447,10 @@ func CommitRepoAction(userId, repoUserId int64, userName, actEmail string,
 }
 
 func newRepoAction(e Engine, u *User, repo *Repository) (err error) {
+	if repo.IsWiki {
+		return nil
+	}
+
 	if err = notifyWatchers(e, &Action{
 		ActUserID:    u.Id,
 		ActUserName:  u.Name,
