@@ -798,8 +798,14 @@ func TransferOwnership(u *User, newOwnerName string, repo *Repository) error {
 			os.MkdirAll(wikiRepoRealPath, os.ModePerm)
 		}
 		f.Close()
-		if err = os.Rename(WikiRepoPath(owner.Name, repo.Name), WikiRepoPath(newOwner.Name, repo.Name)); err != nil {
+		newWikiRepoPath := WikiRepoPath(newOwner.Name, repo.Name)
+		if err = os.Rename(WikiRepoPath(owner.Name, repo.Name), newWikiRepoPath); err != nil {
 			return fmt.Errorf("rename wiki directory: %v", err)
+		}
+		if _, stderr, err := process.ExecDir(10*time.Minute,
+			newWikiRepoPath, fmt.Sprintf("change wiki remote: %s", newWikiRepoPath),
+			"git", "remote", "set-url", "origin", RepoPath(newOwner.Name, repo.Name)); err != nil {
+			return fmt.Errorf("Fail to change wiki remote (%s): %s", newWikiRepoPath, stderr)
 		}
 	}
 
@@ -823,9 +829,15 @@ func ChangeRepositoryName(u *User, oldRepoName, newRepoName string, isWiki bool)
 
 	// Change wiki repository directory name.
 	if isWiki {
-		err = os.Rename(WikiRepoPath(u.LowerName, oldRepoName), WikiRepoPath(u.LowerName, newRepoName))
+		newWikiRepoPath := WikiRepoPath(u.LowerName, newRepoName)
+		err = os.Rename(WikiRepoPath(u.LowerName, oldRepoName), newWikiRepoPath)
 		if err != nil {
 			return err
+		}
+		if _, stderr, err := process.ExecDir(10*time.Minute,
+			newWikiRepoPath, fmt.Sprintf("change wiki remote: %s", newWikiRepoPath),
+			"git", "remote", "set-url", "origin", RepoPath(u.LowerName, newRepoName)); err != nil {
+			return fmt.Errorf("Fail to change wiki remote (%s): %s", newWikiRepoPath, stderr)
 		}
 	}
 	// Change repository directory name.
