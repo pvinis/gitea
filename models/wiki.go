@@ -151,6 +151,23 @@ func GetWikiPage(r *Repository, a string) (*WikiPage, error) {
 	p.Content = string(c)
 	p.Title = strings.Title(strings.Replace(p.Alias, "-", " ", -1))
 
+	repoPath, err := r.RepoPath()
+	if err != nil {
+		return nil, err
+	}
+
+	gitRepo, err := git.OpenRepository(repoPath)
+	if err != nil {
+		return nil, err
+	}
+
+	commits, err := gitRepo.CommitsByFileAndRange("master", fmt.Sprintf("%s.md", p.Alias), 0)
+	if err != nil {
+		return nil, err
+	}
+
+	p.Commit = commits.Front().Value.(*git.Commit)
+
 	return p, nil
 }
 

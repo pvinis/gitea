@@ -23,6 +23,13 @@
                 {{.FileContent | Str2html}}
             </div>
         </div>
+        <div class="wiki-page-list">
+            <div class="right">
+                <img class="avatar-16" src="{{AvatarLink .Page.Commit.Author.Email}}" alt=""/>
+                <a href="{{AppSubUrl}}/{{.Page.Commit.Author.Name}}">{{.Page.Commit.Author.Name}}</a>&nbsp;
+                <span class="age">{{$.i18n.Tr "repo.wiki.edited" }} {{TimeSince .Page.Commit.Author.When $.Lang}}</span>
+            </div>
+        </div>
     </div>
 </div>
 {{template "ng/base/footer" .}}
