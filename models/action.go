@@ -474,6 +474,10 @@ func NewRepoAction(u *User, repo *Repository) (err error) {
 }
 
 func transferRepoAction(e Engine, actUser, oldOwner, newOwner *User, repo *Repository) (err error) {
+	if repo.IsWiki {
+		return nil
+	}
+
 	action := &Action{
 		ActUserID:    actUser.Id,
 		ActUserName:  actUser.Name,
