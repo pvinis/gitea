@@ -1051,16 +1051,18 @@ func GetRepositories(uid int64, private bool) ([]*Repository, error) {
 	repos := make([]*Repository, 0, 10)
 	sess := x.Desc("updated")
 	if !private {
-		sess.Where("is_private=?", false)
+		sess.Where("is_private=?", false).And("is_wiki=?", false)
+	} else {
+		sess.Where("is_wiki=?", false)
 	}
 
-	err := sess.Where("is_wiki=?", false).Find(&repos, &Repository{OwnerId: uid})
+	err := sess.Find(&repos, &Repository{OwnerId: uid})
 	return repos, err
 }
 
 // GetRecentUpdatedRepositories returns the list of repositories that are recently updated.
 func GetRecentUpdatedRepositories(num int) (repos []*Repository, err error) {
-	err = x.Where("is_private=?", false).Where("is_wiki=?", false).Limit(num).Desc("updated").Find(&repos)
+	err = x.Where("is_private=?", false).And("is_wiki=?", false).Limit(num).Desc("updated").Find(&repos)
 	return repos, err
 }
 
