@@ -276,6 +276,13 @@ func RepoAssignment(redirect bool, args ...bool) macaron.Handler {
 		}
 		ctx.Data["RepoLink"] = ctx.Repo.RepoLink
 
+		ctx.Repo.WikiLink, err = repo.WikiLink()
+		if err != nil {
+			ctx.Handle(500, "RepoLink", err)
+			return
+		}
+		ctx.Data["WikiLink"] = ctx.Repo.WikiLink
+
 		tags, err := ctx.Repo.GitRepo.GetTags()
 		if err != nil {
 			ctx.Handle(500, "GetTags", err)

@@ -42,7 +42,7 @@ func Wiki(ctx *middleware.Context) {
 	}
 	ctx.Data["Page"] = p
 	ctx.Data["CanWrite"] = canWrite
-	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.RepoLink))
+	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.WikiLink))
 	ctx.HTML(200, WIKI_VIEW)
 }
 
@@ -65,7 +65,7 @@ func ViewWikiPage(ctx *middleware.Context) {
 
 	ctx.Data["Page"] = p
 	ctx.Data["CanWrite"] = canWrite
-	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.RepoLink))
+	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.WikiLink))
 	ctx.HTML(200, WIKI_VIEW)
 }
 

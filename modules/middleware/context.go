@@ -67,6 +67,7 @@ type RepoContext struct {
 	TreeName     string
 	CommitId     string
 	RepoLink     string
+	WikiLink     string
 	CloneLink    models.CloneLink
 	CommitsCount int
 	Mirror       *models.Mirror

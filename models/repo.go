@@ -225,6 +225,13 @@ func (repo *Repository) RepoLink() (string, error) {
 	return setting.AppSubUrl + "/" + repo.Owner.Name + "/" + repo.Name, nil
 }
 
+func (repo *Repository) WikiLink() (string, error) {
+	if err := repo.GetOwner(); err != nil {
+		return "", err
+	}
+	return setting.AppSubUrl + "/" + repo.Owner.Name + "/" + repo.Name + "/wiki", nil
+}
+
 func (repo *Repository) HasAccess(u *User) bool {
 	has, _ := HasAccess(u, repo, ACCESS_MODE_READ)
 	return has
