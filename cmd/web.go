@@ -404,15 +404,6 @@ func runWeb(ctx *cli.Context) {
 			}, middleware.GitHookService())
 		})
 
-		m.Group("/pulls", func() {
-			m.Get("/", repo.Pulls)
-		})
-		m.Group("/pull", func() {
-			m.Post("/create", bindIgnErr(auth.NewPullRequestForm{}), repo.NewPullRequest)
-			m.Get("/:id", repo.Pull)
-			m.Post("/:id/merge", repo.PullMerge)
-			m.Post("/:id/comment", repo.PullComment)
-		})
 	}, reqSignIn, middleware.RepoAssignment(true), reqAdmin)
 
 	m.Group("/:username/:reponame", func() {
@@ -447,6 +438,16 @@ func runWeb(ctx *cli.Context) {
 			m.Get("/edit/:tagname", repo.EditRelease)
 			m.Post("/edit/:tagname", bindIgnErr(auth.EditReleaseForm{}), repo.EditReleasePost)
 		}, middleware.RepoRef())
+
+		m.Group("/pulls", func() {
+			m.Get("/", repo.Pulls)
+		})
+		m.Group("/pull", func() {
+			m.Post("/create", bindIgnErr(auth.NewPullRequestForm{}), repo.NewPullRequest)
+			m.Get("/:id", repo.Pull)
+			m.Post("/:id/merge", repo.PullMerge)
+			m.Post("/:id/comment", repo.PullComment)
+		})
 	}, reqSignIn, middleware.RepoAssignment(true))
 
 	m.Group("/:username/:reponame", func() {
