@@ -78,6 +78,15 @@ func ApiReqToken() macaron.Handler {
 	}
 }
 
+func ApiAccess() macaron.Handler {
+	return func(ctx *Context) {
+		if setting.Service.RequireSignInView && !ctx.IsSigned {
+			ctx.Error(403)
+			return
+		}
+	}
+}
+
 func ApiReqBasicAuth() macaron.Handler {
 	return func(ctx *Context) {
 		if !ctx.IsBasicAuth {
