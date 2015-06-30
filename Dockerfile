@@ -12,6 +12,6 @@ RUN  go get -v -tags="$TAGS" github.com/go-gitea/gitea \
 
 USER $USER
 
-ENTRYPOINT [ "./gogs" ]
+ENTRYPOINT [ "./gitea" ]
 
 CMD [ "web" ]

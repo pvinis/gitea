@@ -2,6 +2,6 @@ db:
   image: mysql:latest
   environment:
     MYSQL_ROOT_PASSWORD: rootpass
-    MYSQL_DATABASE: gogs
-    MYSQL_USER: gogs
+    MYSQL_DATABASE: gitea
+    MYSQL_USER: gitea
     MYSQL_PASSWORD: password

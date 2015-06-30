@@ -3,9 +3,9 @@
 <head data-suburl="{{AppSubUrl}}">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-	<meta name="author" content="Gogs - Go Git Service" />
-	<meta name="description" content="Gogs(Go Git Service) a painless self-hosted Git Service written in Go" />
-	<meta name="keywords" content="go, git, self-hosted, gogs">
+	<meta name="author" content="Gitea - Git service with a cup of tea" />
+	<meta name="description" content="Gitea (Git service with a cup of tea) a painless self-hosted Git Service written in Go" />
+	<meta name="keywords" content="go, git, self-hosted, gitea">
 	<meta name="_csrf" content="{{.CsrfToken}}" />
 	{{if .GoGetImport}}
 	<meta name="go-import" content="{{.GoGetImport}} git {{.CloneLink.HTTPS}}">
@@ -23,11 +23,11 @@
 
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="{{AppSubUrl}}/css/semantic.min.css">
-	<link rel="stylesheet" href="{{AppSubUrl}}/css/gogs.min.css">
+	<link rel="stylesheet" href="{{AppSubUrl}}/css/gitea.min.css">
 
 	<!-- JavaScript -->
 	<script src="{{AppSubUrl}}/js/semantic.min.js"></script>
-	<script src="{{AppSubUrl}}/js/gogs.js"></script>
+	<script src="{{AppSubUrl}}/js/gitea.js"></script>
 
 	<title>{{if .Title}}{{.Title}} - {{end}}{{AppName}}</title>
 </head>
@@ -47,7 +47,7 @@
 		      	<img class="img-15 ui image brand" src="{{AppSubUrl}}/img/favicon.png">
 		      	<a class="view-ui item {{if .PageIsHome}}active{{end}}" href="{{AppSubUrl}}/">{{if .IsSigned}}{{.i18n.Tr "dashboard"}}{{else}}{{.i18n.Tr "home"}}{{end}}</a>
 		      	<a class="view-ui item {{if .PageIsExplore}}active{{end}}" href="{{AppSubUrl}}/explore">{{.i18n.Tr "explore"}}</a>
-		      	<a class="view-ui item" target="_blank" href="http://gogs.io/docs">{{.i18n.Tr "help"}}</a>
+		      	<a class="view-ui item" target="_blank" href="http://gitea.io/docs">{{.i18n.Tr "help"}}</a>
 		      	<!-- <div class="item">
 		      	  <div class="ui icon input">
 		      	    <input class="searchbox" type="text" placeholder="{{.i18n.Tr "search_project"}}">

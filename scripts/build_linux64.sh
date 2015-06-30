@@ -5,9 +5,9 @@ outPath=./output_$outPlattform_$outArch
 rm -rf $outPath
 mkdir $outPath
 
-CGO_ENABLED=0 GOOS=$outPlattform GOARCH=$outArch go build ../gogs.go
-chmod +x gogs
-mv gogs $outPath/
+CGO_ENABLED=0 GOOS=$outPlattform GOARCH=$outArch go build ../gitea.go
+chmod +x gitea
+mv gitea $outPath/
 
 cp -r ../conf/ $outPath/conf/
 cp -r ../custom/ $outPath/custom/
@@ -16,7 +16,7 @@ cp -r ../public/ $outPath/public/
 cp -r ../templates/ $outPath/templates/
 cp ../cert.pem $outPath/
 cp ../CONTRIBUTING.md $outPath/
-cp gogs_supervisord.sh $outPath/
+cp gitea_supervisord.sh $outPath/
 cp ../key.pem $outPath/
 cp ../LICENSE $outPath/
 cp ../README.md $outPath/

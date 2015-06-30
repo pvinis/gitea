@@ -28,26 +28,26 @@ WORKDIR /go
 
 RUN useradd -m git
 
-ENV GOGS_PATH $GOPATH/src/github.com/go-gitea/gitea
-ENV GOGS_CUSTOM_CONF_PATH $GOGS_PATH/custom/conf
-ENV GOGS_CUSTOM_CONF $GOGS_CUSTOM_CONF_PATH/app.ini
+ENV GITEA_PATH $GOPATH/src/github.com/go-gitea/gitea
+ENV GITEA_CUSTOM_CONF_PATH $GITEA_PATH/custom/conf
+ENV GITEA_CUSTOM_CONF $GITEA_CUSTOM_CONF_PATH/app.ini
 
-RUN git clone -b dev https://github.com/go-gitea/gitea.git $GOGS_PATH
-# WORKDIR $GOGS_PATH
+RUN git clone -b dev https://github.com/go-gitea/gitea.git $GITEA_PATH
+# WORKDIR $GITEA_PATH
 WORKDIR /go/src/github.com/go-gitea/gitea
 RUN go get -d && go build
-RUN chown -R git $GOGS_PATH
+RUN chown -R git $GITEA_PATH
 
-ADD init_gogs.sh /tmp/
-RUN chown git /tmp/init_gogs.sh
-RUN chmod +x /tmp/init_gogs.sh
+ADD init_gitea.sh /tmp/
+RUN chown git /tmp/init_gitea.sh
+RUN chmod +x /tmp/init_gitea.sh
 
 USER git
 ENV HOME /home/git
 ENV USER git
-ENV PATH $GOGS_PATH:$PATH
+ENV PATH $GITEA_PATH:$PATH
 
-RUN git config --global user.name "GoGS" && git config --global user.email "gogitservice@gmail.com"
+RUN git config --global user.name "Gitea" && git config --global user.email "gitea@gitea.io"
 
-ENTRYPOINT ["/tmp/init_gogs.sh"]
-CMD ["gogs", "web"]
+ENTRYPOINT ["/tmp/init_gitea.sh"]
+CMD ["gitea", "web"]

@@ -1,9 +1,9 @@
 <div class="masthead navbar" id="masthead">
     <div class="container">
         <nav class="nav">
-            <a id="nav-logo" class="nav-item pull-left{{if .PageIsHome}} active{{end}}" href="{{AppSubUrl}}/"><img src="{{AppSubUrl}}/img/favicon.png" alt="Gogs Logo" id="logo"></a>
+            <a id="nav-logo" class="nav-item pull-left{{if .PageIsHome}} active{{end}}" href="{{AppSubUrl}}/"><img src="{{AppSubUrl}}/img/favicon.png" alt="Gitea Logo" id="logo"></a>
             <a class="nav-item pull-left{{if .PageIsUserDashboard}} active{{end}}" href="{{AppSubUrl}}/">Dashboard</a>
-            <a class="nav-item pull-left{{if .PageIsHelp}} active{{end}}" target="_blank" href="http://gogs.io/docs">Help</a>
+            <a class="nav-item pull-left{{if .PageIsHelp}} active{{end}}" target="_blank" href="http://gitea.io/docs">Help</a>
             {{if .IsSigned}}
             {{if .HasAccess}}
             <!-- <form class="nav-item pull-left{{if .PageIsNewRepo}} active{{end}}" id="nav-search-form">
