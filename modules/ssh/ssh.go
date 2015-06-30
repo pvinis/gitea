@@ -57,7 +57,7 @@ func handleServerConn(keyId string, chans <-chan ssh.NewChannel) {
 				case "exec":
 					os.Setenv("SSH_ORIGINAL_COMMAND", strings.TrimLeft(payload, "'("))
 					log.Info("Payload: %v", strings.TrimLeft(payload, "'("))
-					cmd := exec.Command("/Users/jiahuachen/Applications/Go/src/github.com/go-gitea/gitea/gogs", "serv", "key-"+keyId)
+					cmd := exec.Command("/Users/jiahuachen/Applications/Go/src/github.com/go-gitea/gitea/gitea", "serv", "key-"+keyId)
 					cmd.Stdout = channel
 					cmd.Stdin = channel
 					cmd.Stderr = channel.Stderr()

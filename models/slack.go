@@ -51,7 +51,7 @@ func GetSlackPayload(p *Payload, meta string) (*SlackPayload, error) {
 	}
 
 	// TODO: handle different payload types: push, new branch, delete branch etc.
-	// when they are added to gogs. Only handles push now
+	// when they are added to gitea. Only handles push now
 	return getSlackPushPayload(p, slack)
 }
 
@@ -92,8 +92,8 @@ func getSlackPushPayload(p *Payload, slack *Slack) (*SlackPayload, error) {
 	return &SlackPayload{
 		Channel:     slack.Channel,
 		Text:        text,
-		Username:    "gogs",
-		IconUrl:     "https://raw.githubusercontent.com/gogits/gogs/master/public/img/favicon.png",
+		Username:    "gitea",
+		IconUrl:     "https://raw.githubusercontent.com/go-gitea/gitea/master/public/img/favicon.png",
 		UnfurlLinks: 0,
 		LinkNames:   0,
 		Attachments: slackAttachments,

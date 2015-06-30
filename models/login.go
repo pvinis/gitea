@@ -324,7 +324,7 @@ func SmtpAuth(host string, port int, a smtp.Auth, useTls bool) error {
 	}
 	defer c.Close()
 
-	if err = c.Hello("gogs"); err != nil {
+	if err = c.Hello("gitea"); err != nil {
 		return err
 	}
 

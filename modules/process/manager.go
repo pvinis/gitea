@@ -25,7 +25,7 @@ var (
 	DEFAULT = 60 * time.Second
 )
 
-// Process represents a working process inherit from Gogs.
+// Process represents a working process inherit from Gitea.
 type Process struct {
 	Pid         int64 // Process ID, not system one.
 	Description string

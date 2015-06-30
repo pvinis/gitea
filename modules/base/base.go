@@ -5,7 +5,7 @@
 
 package base
 
-const DOC_URL = "http://gogs.io/docs"
+const DOC_URL = "http://gitea.io/docs"
 
 type (
 	TplName string

@@ -87,7 +87,7 @@ func NewFileWriter() LoggerInterface {
 // Init file logger with json config.
 // config like:
 //	{
-//	"filename":"log/gogs.log",
+//	"filename":"log/gitea.log",
 //	"maxlines":10000,
 //	"maxsize":1<<30,
 //	"daily":true,

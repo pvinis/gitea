@@ -33,7 +33,7 @@ func NewDatabase() LoggerInterface {
 // config like:
 //	{
 //		"driver": "mysql"
-//		"conn":"root:root@tcp(127.0.0.1:3306)/gogs?charset=utf8",
+//		"conn":"root:root@tcp(127.0.0.1:3306)/gitea?charset=utf8",
 //		"level": 0
 //	}
 // connection string is based on xorm.
