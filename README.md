@@ -66,7 +66,7 @@ Make sure you install the [prerequisites](http://gitea.io/docs/installation/) fi
 There are 5 ways to install Gogs:
 
 - [Install from binary](http://gitea.io/docs/installation/install_from_binary.md)
-- [Install from source](http://gieta.io/docs/installation/install_from_source.md)
+- [Install from source](http://gitea.io/docs/installation/install_from_source.md)
 - [Install from packages](http://gitea.io/docs/installation/install_from_packages.md)
 - [Ship with Docker](https://github.com/go-gitea/gitea/tree/master/docker)
 - [Install with Vagrant](https://github.com/geerlingguy/ansible-vagrant-examples/tree/master/gogs)
