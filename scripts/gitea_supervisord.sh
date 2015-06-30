@@ -3,11 +3,11 @@
 PID="log/supervisord.pid"
 CONF="etc/supervisord.conf"
 
-EXEPATH='/usr/bin/gogs_start'
+EXEPATH='/usr/bin/gitea_start'
 if [ ! -f $EXEPATH ]; then
-    gogs_scripts_path=$(cd `dirname $0`; pwd)
-    echo $gogs_scripts_path
-    sudo ln -s $gogs_scripts_path'/start.sh' /usr/bin/gogs_start
+    gitea_scripts_path=$(cd `dirname $0`; pwd)
+    echo $gitea_scripts_path
+    sudo ln -s $gitea_scripts_path'/start.sh' /usr/bin/gitea_start
 fi
 
 LOGDIR="log"

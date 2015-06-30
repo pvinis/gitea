@@ -2,10 +2,10 @@
 // @codekit-prepend "lib/lib.js"
 // @codekit-prepend "utils/tabs.js"
 // @codekit-prepend "utils/preview.js"
-// @codekit-prepend "gogs/issue_label.js"
+// @codekit-prepend "gitea/issue_label.js"
 // @codekit-prepend "lib/jquery.tipsy.js"
 
-var Gogs = {};
+var Gitea = {};
 
 (function ($) {
     // Extend jQuery ajax, set CSRF token value.
@@ -112,7 +112,7 @@ var Gogs = {};
 
 (function ($) {
     // Render markdown.
-    Gogs.renderMarkdown = function () {
+    Gitea.renderMarkdown = function () {
         var $md = $('.markdown');
         var $pre = $md.find('pre > code').parent();
         $pre.addClass('prettyprint');
@@ -138,7 +138,7 @@ var Gogs = {};
     };
 
     // Render code view.
-    Gogs.renderCodeView = function () {
+    Gitea.renderCodeView = function () {
         function selectRange($list, $select, $from) {
             $list.removeClass('active');
             if ($from) {
@@ -203,7 +203,7 @@ var Gogs = {};
     };
 
     // Render diff view.
-    Gogs.renderDiffView = function () {
+    Gitea.renderDiffView = function () {
         function selectRange($list, $select, $from) {
             $list.removeClass('active');
             $list.parents('tr').removeClass('end-selected-line');
@@ -403,7 +403,7 @@ var Gogs = {};
                 selectRange($list, $first);
                 $("html, body").scrollTop($first.offset().top - 200);
                 return;
-            }            
+            }
             m = window.location.hash.match(/^#comment-(\d+)$/);
             if (m) {
                 $("html, body").animate({
@@ -415,12 +415,12 @@ var Gogs = {};
     };
 
     // Search users by keyword.
-    Gogs.searchUsers = function (val, $target) {
+    Gitea.searchUsers = function (val, $target) {
         var notEmpty = function (str) {
           return str && str.length > 0;
         }
         $.ajax({
-            url: Gogs.AppSubUrl + '/api/v1/users/search?q=' + val,
+            url: Gitea.AppSubUrl + '/api/v1/users/search?q=' + val,
             dataType: "json",
             success: function (json) {
                 if (json.ok && json.data.length) {
@@ -442,9 +442,9 @@ var Gogs = {};
     }
 
     // Search repositories by keyword.
-    Gogs.searchRepos = function (val, $target, $param) {
+    Gitea.searchRepos = function (val, $target, $param) {
         $.ajax({
-            url: Gogs.AppSubUrl + '/api/v1/repos/search?q=' + val + '&' + $param,
+            url: Gitea.AppSubUrl + '/api/v1/repos/search?q=' + val + '&' + $param,
             dataType: "json",
             success: function (json) {
                 if (json.ok && json.data.length) {
@@ -462,12 +462,12 @@ var Gogs = {};
     }
 
     // Copy util.
-    Gogs.bindCopy = function (selector) {
+    Gitea.bindCopy = function (selector) {
         if ($(selector).hasClass('js-copy-bind')) {
             return;
         }
         $(selector).zclip({
-            path: Gogs.AppSubUrl + "/js/ZeroClipboard.swf",
+            path: Gitea.AppSubUrl + "/js/ZeroClipboard.swf",
             copy: function () {
                 var t = $(this).data("copy-val");
                 var to = $($(this).data("copy-from"));
@@ -498,12 +498,12 @@ var Gogs = {};
 })(jQuery);
 
 function initCore() {
-    Gogs.renderMarkdown();
+    Gitea.renderMarkdown();
 
     if ($('.code-diff').length == 0) {
-        Gogs.renderCodeView();
+        Gitea.renderCodeView();
     } else {
-        Gogs.renderDiffView();
+        Gitea.renderDiffView();
     }
 
     // Switch list.
@@ -615,7 +615,7 @@ function initRepo() {
     // Copy URL.
     var $clone_btn = $('#repo-clone-copy');
     $clone_btn.hover(function () {
-        Gogs.bindCopy($(this));
+        Gitea.bindCopy($(this));
     })
     $clone_btn.tipsy({
         fade: true
@@ -636,7 +636,7 @@ function initRepo() {
 function initHookTypeChange() {
     // web hook type change
     $('select#hook-type').on("change", function () {
-        hookTypes = ['Gogs', 'Slack'];
+        hookTypes = ['Gitea', 'Slack'];
 
         var curHook = $(this).val();
         hookTypes.forEach(function (hookType) {
@@ -717,7 +717,7 @@ function initRepoSetting() {
             $ul.toggleHide();
             return;
         }
-        Gogs.searchUsers($this.val(), $ul);
+        Gitea.searchUsers($this.val(), $ul);
     }).on('focus', function () {
         if (!$(this).val()) {
             $ul.toggleHide();
@@ -780,7 +780,7 @@ function initInvite() {
             $ul.toggleHide();
             return;
         }
-        Gogs.searchUsers($this.val(), $ul);
+        Gitea.searchUsers($this.val(), $ul);
     }).on('focus', function () {
         if (!$(this).val()) {
             $ul.toggleHide();
@@ -817,7 +817,7 @@ function initTeamMembersList() {
             $ul.toggleHide();
             return;
         }
-        Gogs.searchUsers($this.val(), $ul);
+        Gitea.searchUsers($this.val(), $ul);
     }).on('focus', function () {
         if (!$(this).val()) {
             $ul.toggleHide();
@@ -839,7 +839,7 @@ function initTeamRepositoriesList() {
             $ul.toggleHide();
             return;
         }
-        Gogs.searchRepos($this.val(), $ul, 'uid=' + $this.data('uid'));
+        Gitea.searchRepos($this.val(), $ul, 'uid=' + $this.data('uid'));
     }).on('focus', function () {
         if (!$(this).val()) {
             $ul.toggleHide();
@@ -990,7 +990,7 @@ function initDiff() {
 }
 
 $(document).ready(function () {
-    Gogs.AppSubUrl = $('head').data('suburl') || '';
+    Gitea.AppSubUrl = $('head').data('suburl') || '';
     initCore();
     if ($('#user-profile-setting').length) {
         initUserSetting();
@@ -1063,7 +1063,7 @@ function homepage() {
     $('#promo-form').submit(function (e) {
         if ($('#username').val() === "") {
             e.preventDefault();
-            window.location.href = Gogs.AppSubUrl + '/user/login';
+            window.location.href = Gitea.AppSubUrl + '/user/login';
             return true
         }
     });
@@ -1071,10 +1071,10 @@ function homepage() {
     $('#register-button').click(function (e) {
         if ($('#username').val() === "") {
             e.preventDefault();
-            window.location.href = Gogs.AppSubUrl + '/user/sign_up';
+            window.location.href = Gitea.AppSubUrl + '/user/sign_up';
             return true
         }
-        $('#promo-form').attr('action', Gogs.AppSubUrl + '/user/sign_up');
+        $('#promo-form').attr('action', Gitea.AppSubUrl + '/user/sign_up');
     });
 }
 

@@ -1,6 +1,6 @@
 /*!
- * Gogs - Go Git Service (http://gogs.io)
- * Copyright 2014 Gogs.
+ * Gitea - Git service with a cup of tea (http://gitea.io)
+ * Copyright 2014-2015 Gitea.
  * Licensed under MIT (https://github.com/go-gitea/gitea/blob/master/LICENSE)
  */
 
@@ -257,7 +257,7 @@ body {
     background-color: #FFF;
     padding: 0 12px;
 }
-/* gogs-user-profile */
+/* gitea-user-profile */
 
 #user-avatar {
     width: 200px;
