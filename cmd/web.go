@@ -241,7 +241,7 @@ func runWeb(ctx *cli.Context) {
 			m.Any("/*", func(ctx *middleware.Context) {
 				ctx.HandleAPI(404, "Page not found")
 			})
-		})
+		}, middleware.ApiAccess())
 	})
 
 	// User.
