@@ -1,3 +1,9 @@
+// Copyright 2009 The Go Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package ber
 
 import (
@@ -181,7 +187,7 @@ func readBytes(reader io.Reader, buf []byte) error {
 	if reader == nil {
 		return errors.New("reader was nil, aborting")
 	}
-	
+
 	for idx < buflen {
 		n, err := reader.Read(buf[idx:])
 		if err != nil {

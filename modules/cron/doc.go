@@ -1,3 +1,8 @@
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
 /*
 Package cron implements a cron spec parser and job runner.
 
@@ -126,4 +131,5 @@ Upon waking:
  - it re-sorts the array of entries by next activation time.
  - it goes to sleep until the soonest job.
 */
+
 package cron

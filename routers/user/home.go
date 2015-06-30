@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -261,7 +262,7 @@ func Email2User(ctx *middleware.Context) {
 	ctx.Redirect(setting.AppSubUrl + "/user/" + u.Name)
 }
 
-func Issues(ctx *middleware.Context) {	
+func Issues(ctx *middleware.Context) {
 	ctx.Data["Title"] = ctx.Tr("issues")
 	ctx.Data["PageIsDashboard"] = true
 	ctx.Data["PageIsIssues"] = true
@@ -388,8 +389,8 @@ func Issues(ctx *middleware.Context) {
 	} else {
 		ctx.Data["ShowCount"] = issueStats.OpenCount
 	}
-	
+
 	ctx.Data["ContextUser"] = ctx.User
-	
+
 	ctx.HTML(200, ISSUES)
 }
