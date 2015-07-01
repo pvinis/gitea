@@ -276,6 +276,13 @@ func RepoAssignment(redirect bool, args ...bool) macaron.Handler {
 		}
 		ctx.Data["RepoLink"] = ctx.Repo.RepoLink
 
+		ctx.Repo.WikiLink, err = repo.WikiLink()
+		if err != nil {
+			ctx.Handle(500, "RepoLink", err)
+			return
+		}
+		ctx.Data["WikiLink"] = ctx.Repo.WikiLink
+
 		tags, err := ctx.Repo.GitRepo.GetTags()
 		if err != nil {
 			ctx.Handle(500, "GetTags", err)
@@ -287,6 +294,11 @@ func RepoAssignment(redirect bool, args ...bool) macaron.Handler {
 		// Non-fork repository will not return error in this method.
 		if err = repo.GetForkRepo(); err != nil {
 			ctx.Handle(500, "GetForkRepo", err)
+			return
+		}
+
+		if err = repo.GetWikiRepo(); err != nil {
+			ctx.Handle(500, "GetWikiRepo", err)
 			return
 		}
 

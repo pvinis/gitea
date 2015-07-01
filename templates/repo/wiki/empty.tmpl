@@ -1,0 +1,19 @@
+{{template "ng/base/head" .}}
+{{template "ng/base/header" .}}
+<div id="repo-wrapper">
+    {{template "repo/wiki/header" .}}
+    <div id="repo-content" class="clear container">
+        <div class="panel panel-radius" id="repo-wiki">
+            <p class="panel-header">
+                <i class="icon fa fa-book fa-lg"></i>
+                <strong class="file-name">{{.i18n.Tr "repo.wiki.wiki" }}</strong>
+            </p>
+            <div class="panel-content code-view" id="repo-wiki-view">
+                <p class="text-center">
+                    {{.i18n.Tr "repo.wiki.empty_message" $.RepoLink "wiki/new" | Str2html }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "ng/base/footer" .}}

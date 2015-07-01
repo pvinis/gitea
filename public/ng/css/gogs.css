@@ -2818,3 +2818,58 @@ textarea#commit-add-content {
 #profile-body {
   margin-left: 20px;
 }
+#wiki-page-create-form {
+  width: 1200px;
+  margin: 60px auto auto auto;
+  background: white;
+}
+#wiki-page-create-form h2 {
+  margin: .5em 1em;
+}
+#wiki-page-create-form .ipt {
+  width: 1085px;
+}
+#wiki-page-create-form textarea {
+  height: 120px;
+}
+#wiki-page-create-form .avatar {
+  vertical-align: middle;
+  margin-right: .6em;
+  width: 28px;
+  height: 28px;
+}
+#wiki-page-create-form:hover {
+  box-shadow: 0px 0px 6px #CCC;
+}
+#wiki-page-create-form .panel-content {
+  padding-top: 0px;
+}
+#wiki-page-create-cancel {
+  margin-left: 1em;
+}
+#dashboard-header > .menu-line > li #new-wiki-page {
+  margin: 7px 20px 0 0;
+}
+.wiki-page-list {
+  font-size: 17px;
+}
+.wiki-page-list ul {
+  width: 100%;
+  list-style: none;
+}
+.wiki-page-list ul li {
+  border-bottom: 1px solid #EEE;
+  padding: 6px;
+}
+.wiki-page-list ul li:last-child {
+  border-bottom: none;
+}
+.wiki-page-list .right {
+  color: #888;
+}
+.wiki-page-list .right a {
+  font-size: 14px;
+}
+.wiki-page-list .right span {
+  font-size: 12px;
+}

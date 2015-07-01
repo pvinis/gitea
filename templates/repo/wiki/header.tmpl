@@ -1,0 +1,26 @@
+<div id="dashboard-header" class="clear">
+    <ul class="menu menu-line container">
+        <li class="right">
+            <a {{if .PageIsGit}}class="current"{{end}} href="{{$.RepoLink}}/wiki/git"><i class="octicon octicon-repo-pull"></i>Git</a>
+        </li>
+        <li class="right">
+            <a {{if .Pagelist}}class="current"{{end}} href="{{$.RepoLink}}/wiki/pages"><i class="octicon octicon-list-unordered"></i>{{.i18n.Tr "repo.wiki.pagelist" }}</a>
+        </li>
+        <li class="right">
+            <a {{if .Page.Title}}class="current"{{end}} href="{{$.RepoLink}}/wiki"><i class="octicon octicon-book"></i>Home</a>
+        </li>
+        <li class="right">
+            <button class="btn btn-large btn-green btn-radius" id="new-wiki-page"><i class="octicon octicon-plus"></i>{{.i18n.Tr "repo.wiki.new_page" }}</button>
+        </li>
+    </ul>
+    <div class="container clear">
+        <h1 id="repo-header-name" class="left public">
+            <i class="mega-octicon octicon-{{if .IsPrivate}}lock{{else if .IsMirror}}repo-clone{{else if .IsFork}}repo-forked{{else}}repo{{end}}"></i>
+            <a class="author" href="{{AppSubUrl}}/{{.Owner.Name}}">{{.Repository.Owner.Name}}</a>
+            <span class="divider">/</span>
+            <a class="repo text-bold" href="{{$.RepoLink}}">{{.Repository.Name}}</a>
+            {{if .Repository.IsMirror}}<span class="label label-gray">{{$.i18n.Tr "mirror"}}</span>{{end}}
+            {{if .Repository.IsFork}}<span class="fork-flag">forked from <a href="{{.Repository.ForkRepo.RepoLink}}">{{SubStr .Repository.ForkRepo.RepoLink 1 -1}}</a></span>{{end}}
+        </h1>
+    </div>
+</div>

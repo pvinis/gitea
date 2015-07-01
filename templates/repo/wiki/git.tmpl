@@ -1,0 +1,19 @@
+{{template "ng/base/head" .}}
+{{template "ng/base/header" .}}
+<div id="repo-wrapper">
+    {{template "repo/wiki/header" .}}
+    <div id="repo-content" class="clear container">
+        <div class="panel panel-radius" id="repo-wiki">
+            <p class="panel-header">
+                <i class="icon fa fa-book fa-lg"></i>
+                <strong class="file-name">{{.i18n.Tr "repo.wiki.wiki" }}</strong>
+            </p>
+            <div class="panel-content code-view markdown" id="repo-wiki-view">
+                {{.i18n.Tr "repo.wiki.git_access_message" }}
+                <pre class="prettyprint prettyprinted"><code>$ git clone {{.WikiRepo.CloneLink.HTTPS}}
+$ cd {{.WikiRepo.Name}}</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "ng/base/footer" .}}

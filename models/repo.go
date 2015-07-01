@@ -162,6 +162,10 @@ type Repository struct {
 	ForkId   int64
 	ForkRepo *Repository `xorm:"-"`
 
+	IsWiki       bool        `xorm:"NOT NULL DEFAULT false"`
+	WikiRepoId   int64       `xorm:"NOT NULL DEFAULT 0"`
+	WikiRepo     *Repository `xorm:"-"`
+
 	Created time.Time `xorm:"CREATED"`
 	Updated time.Time `xorm:"UPDATED"`
 }
@@ -191,6 +195,15 @@ func (repo *Repository) GetForkRepo() (err error) {
 	return err
 }
 
+func (repo *Repository) GetWikiRepo() (err error) {
+	if repo.IsWiki || repo.WikiRepoId == 0 {
+		return nil
+	}
+
+	repo.WikiRepo, err = GetRepositoryById(repo.WikiRepoId)
+	return err
+}
+
 func (repo *Repository) RepoPath() (string, error) {
 	if err := repo.GetOwner(); err != nil {
 		return "", err
@@ -198,11 +211,25 @@ func (repo *Repository) RepoPath() (string, error) {
 	return RepoPath(repo.Owner.Name, repo.Name), nil
 }
 
+func (repo *Repository) WikiRepoPath() (string, error) {
+	if err := repo.GetOwner(); err != nil {
+		return "", err
+	}
+	return WikiRepoPath(repo.Owner.Name, repo.Name), nil
+}
+
 func (repo *Repository) RepoLink() (string, error) {
 	if err := repo.GetOwner(); err != nil {
 		return "", err
 	}
 	return setting.AppSubUrl + "/" + repo.Owner.Name + "/" + repo.Name, nil
+}
+
+func (repo *Repository) WikiLink() (string, error) {
+	if err := repo.GetOwner(); err != nil {
+		return "", err
+	}
+	return setting.AppSubUrl + "/" + repo.Owner.Name + "/" + repo.Name + "/wiki", nil
 }
 
 func (repo *Repository) HasAccess(u *User) bool {
@@ -361,7 +388,7 @@ func MirrorRepository(repoId int64, userName, repoName, repoPath, url string) er
 
 // MigrateRepository migrates a existing repository from other project hosting.
 func MigrateRepository(u *User, name, desc string, private, mirror bool, url string) (*Repository, error) {
-	repo, err := CreateRepository(u, name, desc, "", "", private, mirror, false)
+	repo, err := CreateRepository(u, name, desc, "", "", private, mirror, false, false, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -535,7 +562,7 @@ func initRepository(e Engine, repoPath string, u *User, repo *Repository, initRe
 }
 
 // CreateRepository creates a repository for given user or organization.
-func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMirror, initReadme bool) (_ *Repository, err error) {
+func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMirror, initReadme, isWiki bool, wikiForRepoID int64) (_ *Repository, err error) {
 	if err = IsUsableName(name); err != nil {
 		return nil, err
 	}
@@ -554,6 +581,7 @@ func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMi
 		LowerName:   strings.ToLower(name),
 		Description: desc,
 		IsPrivate:   isPrivate,
+		IsWiki:      isWiki,
 	}
 
 	sess := x.NewSession()
@@ -564,6 +592,11 @@ func CreateRepository(u *User, name, desc, lang, license string, isPrivate, isMi
 
 	if _, err = sess.Insert(repo); err != nil {
 		return nil, err
+	} else if isWiki {
+		_, err = sess.Exec("UPDATE `repository` SET wiki_repo_id = ? WHERE id = ?", repo.Id, wikiForRepoID);
+		if err != nil {
+			return nil, err
+		}
 	} else if _, err = sess.Exec("UPDATE `user` SET num_repos = num_repos + 1 WHERE id = ?", u.Id); err != nil {
 		return nil, err
 	}
@@ -644,6 +677,11 @@ func GetRepositoriesWithUsers(num, offset int) ([]*Repository, error) {
 // RepoPath returns repository path by given user and repository name.
 func RepoPath(userName, repoName string) string {
 	return filepath.Join(UserPath(userName), strings.ToLower(repoName)+".git")
+}
+
+// RepoPath returns repository path by given user and repository name.
+func WikiRepoPath(userName, repoName string) string {
+	return filepath.Join(setting.RepoRootPath, ".wiki", strings.ToLower(userName), strings.ToLower(repoName))
 }
 
 // TransferOwnership transfers all corresponding setting from old user to new one.
@@ -761,11 +799,29 @@ func TransferOwnership(u *User, newOwnerName string, repo *Repository) error {
 		return fmt.Errorf("rename directory: %v", err)
 	}
 
+	if repo.IsWiki {
+		wikiRepoRealPath := filepath.Join(WikiRepoPath(newOwner.Name, repo.Name), "/../")
+		f, err := os.Open(wikiRepoRealPath)
+		if err != nil {
+			os.MkdirAll(wikiRepoRealPath, os.ModePerm)
+		}
+		f.Close()
+		newWikiRepoPath := WikiRepoPath(newOwner.Name, repo.Name)
+		if err = os.Rename(WikiRepoPath(owner.Name, repo.Name), newWikiRepoPath); err != nil {
+			return fmt.Errorf("rename wiki directory: %v", err)
+		}
+		if _, stderr, err := process.ExecDir(10*time.Minute,
+			newWikiRepoPath, fmt.Sprintf("change wiki remote: %s", newWikiRepoPath),
+			"git", "remote", "set-url", "origin", RepoPath(newOwner.Name, repo.Name)); err != nil {
+			return fmt.Errorf("Fail to change wiki remote (%s): %s", newWikiRepoPath, stderr)
+		}
+	}
+
 	return sess.Commit()
 }
 
 // ChangeRepositoryName changes all corresponding setting from old repository name to new one.
-func ChangeRepositoryName(u *User, oldRepoName, newRepoName string) (err error) {
+func ChangeRepositoryName(u *User, oldRepoName, newRepoName string, isWiki bool) (err error) {
 	oldRepoName = strings.ToLower(oldRepoName)
 	newRepoName = strings.ToLower(newRepoName)
 	if err = IsUsableName(newRepoName); err != nil {
@@ -779,6 +835,19 @@ func ChangeRepositoryName(u *User, oldRepoName, newRepoName string) (err error) 
 		return ErrRepoAlreadyExist
 	}
 
+	// Change wiki repository directory name.
+	if isWiki {
+		newWikiRepoPath := WikiRepoPath(u.LowerName, newRepoName)
+		err = os.Rename(WikiRepoPath(u.LowerName, oldRepoName), newWikiRepoPath)
+		if err != nil {
+			return err
+		}
+		if _, stderr, err := process.ExecDir(10*time.Minute,
+			newWikiRepoPath, fmt.Sprintf("change wiki remote: %s", newWikiRepoPath),
+			"git", "remote", "set-url", "origin", RepoPath(u.LowerName, newRepoName)); err != nil {
+			return fmt.Errorf("Fail to change wiki remote (%s): %s", newWikiRepoPath, stderr)
+		}
+	}
 	// Change repository directory name.
 	return os.Rename(RepoPath(u.LowerName, oldRepoName), RepoPath(u.LowerName, newRepoName))
 }
@@ -919,6 +988,17 @@ func DeleteRepository(uid, repoID int64, userName string) error {
 		}
 	}
 
+	// Remove wiki repository files.
+	if repo.IsWiki {
+		if err = os.RemoveAll(WikiRepoPath(userName, repo.Name)); err != nil {
+			desc := fmt.Sprintf("delete wiki repository files(%s/%s): %v", userName, repo.Name, err)
+			log.Warn(desc)
+			if err = CreateRepositoryNotice(desc); err != nil {
+				log.Error(4, "add notice: %v", err)
+			}
+		}
+	}
+
 	return sess.Commit()
 }
 
@@ -978,7 +1058,9 @@ func GetRepositories(uid int64, private bool) ([]*Repository, error) {
 	repos := make([]*Repository, 0, 10)
 	sess := x.Desc("updated")
 	if !private {
-		sess.Where("is_private=?", false)
+		sess.Where("is_private=?", false).And("is_wiki=?", false)
+	} else {
+		sess.Where("is_wiki=?", false)
 	}
 
 	err := sess.Find(&repos, &Repository{OwnerId: uid})
@@ -987,7 +1069,7 @@ func GetRepositories(uid int64, private bool) ([]*Repository, error) {
 
 // GetRecentUpdatedRepositories returns the list of repositories that are recently updated.
 func GetRecentUpdatedRepositories(num int) (repos []*Repository, err error) {
-	err = x.Where("is_private=?", false).Limit(num).Desc("updated").Find(&repos)
+	err = x.Where("is_private=?", false).And("is_wiki=?", false).Limit(num).Desc("updated").Find(&repos)
 	return repos, err
 }
 
@@ -1383,7 +1465,7 @@ func IsStaring(uid, repoId int64) bool {
 //  \___  / \____/|__|  |__|_ \
 //      \/                   \/
 
-func ForkRepository(u *User, oldRepo *Repository, name, desc string) (_ *Repository, err error) {
+func ForkRepository(u *User, oldRepo *Repository, name, desc string, wikiRepoId int64) (_ *Repository, err error) {
 	has, err := IsRepositoryExist(u, name)
 	if err != nil {
 		return nil, fmt.Errorf("IsRepositoryExist: %v", err)
@@ -1408,6 +1490,8 @@ func ForkRepository(u *User, oldRepo *Repository, name, desc string) (_ *Reposit
 		IsPrivate:   oldRepo.IsPrivate,
 		IsFork:      true,
 		ForkId:      oldRepo.Id,
+		IsWiki:      oldRepo.IsWiki,
+		WikiRepoId:  wikiRepoId,
 	}
 
 	sess := x.NewSession()
@@ -1459,6 +1543,16 @@ func ForkRepository(u *User, oldRepo *Repository, name, desc string) (_ *Reposit
 		"git", "clone", "--bare", oldRepoPath, repoPath)
 	if err != nil {
 		return nil, fmt.Errorf("git clone: %v", stderr)
+	}
+
+	if oldRepo.IsWiki {
+		wikiRepoPath := WikiRepoPath(u.Name, repo.Name)
+		_, stderr, err := process.ExecTimeout(10*time.Minute,
+			fmt.Sprintf("ForkRepository(copy wiki): %s/%s", u.Name, repo.Name),
+			"git", "clone", oldRepoPath, wikiRepoPath)
+		if err != nil {
+			return nil, fmt.Errorf("git clone: %v", stderr)
+		}
 	}
 
 	_, stderr, err = process.ExecDir(-1,

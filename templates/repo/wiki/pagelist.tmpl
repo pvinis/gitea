@@ -1,0 +1,28 @@
+{{template "ng/base/head" .}}
+{{template "ng/base/header" .}}
+<div id="repo-wrapper">
+    {{template "repo/wiki/header" .}}
+    <div id="repo-content" class="clear container">
+        <div class="panel panel-radius" id="repo-wiki">
+            <p class="panel-header">
+                <i class="icon fa fa-book fa-lg"></i>
+                <strong class="file-name">{{.i18n.Tr "repo.wiki.pagelist" }}</strong>
+            </p>
+            <div class="panel-content code-view wiki-page-list" id="repo-wiki-view">
+                <ul>
+                    {{range .Pagelist}}
+                    <li>
+                        <a href="{{$.RepoLink}}/wiki/{{.Alias}}">{{.Title}}</a>
+                        <div class="right">
+                            <img class="avatar-16" src="{{AvatarLink .Commit.Author.Email}}" alt=""/>
+                            <a href="{{AppSubUrl}}/{{.Commit.Author.Name}}">{{.Commit.Author.Name}}</a>&nbsp;
+                            <span class="age">{{$.i18n.Tr "repo.wiki.edited" }} {{TimeSince .Commit.Author.When $.Lang}}</span>
+                        </div>
+                    </li>
+                    {{end}}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "ng/base/footer" .}}

@@ -25,6 +25,7 @@ import (
 	"github.com/go-gitea/gitea/modules/base"
 	"github.com/go-gitea/gitea/modules/git"
 	"github.com/go-gitea/gitea/modules/log"
+	"github.com/go-gitea/gitea/modules/process"
 	"github.com/go-gitea/gitea/modules/setting"
 )
 
@@ -401,6 +402,26 @@ func ChangeUserName(u *User, newUserName string) (err error) {
 		return ErrUserAlreadyExist{newUserName}
 	}
 
+	f, err := os.Open(WikiUserPath(u.LowerName))
+	if err == nil {
+		err = os.Rename(WikiUserPath(u.LowerName), WikiUserPath(newUserName))
+		if err != nil {
+			return err
+		}
+		wikis, err := filepath.Glob(WikiUserPath(newUserName) + "/*")
+		if err != nil {
+			return err
+		}
+		for _, w := range wikis {
+			if _, stderr, err := process.ExecDir(10*time.Minute,
+				w, fmt.Sprintf("change wiki remote: %s", w),
+				"git", "remote", "set-url", "origin", fmt.Sprintf("%s/%s.git", UserPath(newUserName), filepath.Base(w))); err != nil {
+				return fmt.Errorf("Fail to change wiki remote (%s): %s", w, stderr)
+			}
+		}
+	}
+	f.Close()
+
 	return os.Rename(UserPath(u.LowerName), UserPath(newUserName))
 }
 
@@ -536,6 +557,10 @@ func DeleteInactivateUsers() error {
 // UserPath returns the path absolute path of user repositories.
 func UserPath(userName string) string {
 	return filepath.Join(setting.RepoRootPath, strings.ToLower(userName))
+}
+// WikiUserPath returns the path absolute path of user wiki repositories.
+func WikiUserPath(userName string) string {
+	return filepath.Join(setting.RepoRootPath, ".wiki", strings.ToLower(userName))
 }
 
 func GetUserByKeyId(keyId int64) (*User, error) {

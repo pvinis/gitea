@@ -1,0 +1,35 @@
+{{template "ng/base/head" .}}
+{{template "ng/base/header" .}}
+<div id="repo-wrapper">
+    {{template "repo/wiki/header" .}}
+    <div id="repo-content" class="clear container">
+        <div class="panel panel-radius" id="repo-wiki">
+            <p class="panel-header">
+                <i class="icon fa fa-book fa-lg"></i>
+                <strong class="file-name">{{.Page.Title}}</strong>
+                {{if .CanWrite}}
+                <span class="action right">
+                    <a href="{{$.RepoLink}}/wiki/{{.Page.Alias}}/edit" class="edit-wiki-page">
+                        <i class="octicon octicon-pencil"></i>
+                    </a>
+                    <a href="{{$.RepoLink}}/wiki/{{.Page.Alias}}/remove" class="remove-wiki-page">
+                        <i class="octicon octicon-x"></i>
+                    </a>
+                </span>
+                {{end}}
+            </p>
+
+            <div class="panel-content markdown code-view" id="repo-code-view">
+                {{.FileContent | Str2html}}
+            </div>
+        </div>
+        <div class="wiki-page-list">
+            <div class="right">
+                <img class="avatar-16" src="{{AvatarLink .Page.Commit.Author.Email}}" alt=""/>
+                <a href="{{AppSubUrl}}/{{.Page.Commit.Author.Name}}">{{.Page.Commit.Author.Name}}</a>&nbsp;
+                <span class="age">{{$.i18n.Tr "repo.wiki.edited" }} {{TimeSince .Page.Commit.Author.When $.Lang}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "ng/base/footer" .}}

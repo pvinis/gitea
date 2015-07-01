@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"io/ioutil"
 	"path"
-	"path/filepath"
 	"strings"
 
 	"github.com/go-gitea/gitea/models"
@@ -113,46 +112,9 @@ func Home(ctx *middleware.Context) {
 		}
 	} else {
 		// Directory and file list.
-		tree, err := ctx.Repo.Commit.SubTree(treename)
+		files, entries, err := ctx.Repo.Commit.GetTreeFiles(treename)
 		if err != nil {
-			ctx.Handle(404, "SubTree", err)
-			return
-		}
-
-		entries, err := tree.ListEntries(treename)
-		if err != nil {
-			ctx.Handle(500, "ListEntries", err)
-			return
-		}
-		entries.Sort()
-
-		files := make([][]interface{}, 0, len(entries))
-		for _, te := range entries {
-			if te.Type != git.COMMIT {
-				c, err := ctx.Repo.Commit.GetCommitOfRelPath(filepath.Join(treePath, te.Name()))
-				if err != nil {
-					ctx.Handle(500, "GetCommitOfRelPath", err)
-					return
-				}
-				files = append(files, []interface{}{te, c})
-			} else {
-				sm, err := ctx.Repo.Commit.GetSubModule(path.Join(treename, te.Name()))
-				if err != nil {
-					ctx.Handle(500, "GetSubModule", err)
-					return
-				}
-				smUrl := ""
-				if sm != nil {
-					smUrl = sm.Url
-				}
-
-				c, err := ctx.Repo.Commit.GetCommitOfRelPath(filepath.Join(treePath, te.Name()))
-				if err != nil {
-					ctx.Handle(500, "GetCommitOfRelPath", err)
-					return
-				}
-				files = append(files, []interface{}{te, git.NewSubModuleFile(c, smUrl, te.Id.String())})
-			}
+			ctx.Handle(404, "commit.GetTreeFiles", err)
 		}
 		ctx.Data["Files"] = files
 

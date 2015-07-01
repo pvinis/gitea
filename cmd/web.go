@@ -428,6 +428,11 @@ func runWeb(ctx *cli.Context) {
 
 		m.Post("/comment/:action", repo.Comment)
 
+		m.Get("/wiki/new", repo.CreateWikiPage)
+		m.Get("/wiki/:slug/edit", repo.EditWikiPage)
+		m.Post("/wiki/:slug/remove", repo.WikiPageRemove)
+		m.Post("/wiki/new", bindIgnErr(auth.CreateWikiPageForm{}), repo.CreateWikiPagePost)
+
 		m.Group("/releases", func() {
 			m.Get("/new", repo.NewRelease)
 			m.Post("/new", bindIgnErr(auth.NewReleaseForm{}), repo.NewReleasePost)
@@ -448,6 +453,11 @@ func runWeb(ctx *cli.Context) {
 		m.Get("/pulls2/", repo.PullRequest2)
 		m.Get("/labels2/", repo.Labels2)
 		m.Get("/milestone2/", repo.Milestones2)
+
+		m.Get("/wiki", repo.Wiki)
+		m.Get("/wiki/pages", repo.WikiPageList)
+		m.Get("/wiki/git", repo.WikiGit)
+		m.Get("/wiki/:slug", repo.ViewWikiPage)
 
 		m.Group("", func() {
 			m.Get("/src/*", repo.Home)
