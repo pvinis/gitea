@@ -75,6 +75,7 @@ func CreateWikiPage(ctx *middleware.Context) {
 		ctx.Data["PageTitle"] = "Home"
 	}
 
+	ctx.Data["IsCreate"] = true
 	canWrite, err := models.HasAccess(ctx.User, ctx.Repo.Repository, models.ACCESS_MODE_WRITE)
 	if err != nil {
 		ctx.Handle(500, "wiki.CreateWikiPage", err)
@@ -93,6 +94,7 @@ func EditWikiPage(ctx *middleware.Context) {
 		ctx.Data["PageTitle"] = "Home"
 	}
 
+	ctx.Data["IsCreate"] = false
 	p, err := models.GetWikiPage(wr, ctx.Params(":slug"))
 	if err != nil {
 		ctx.Handle(404, "wiki.ViewWikiPage", err)
