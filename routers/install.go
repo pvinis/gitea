@@ -75,6 +75,7 @@ func GlobalInit() {
 		log.Info("SQLite3 Enabled")
 	}
 	checkRunMode()
+	log.Info("Offline Mode: %v", setting.OfflineMode)
 }
 
 func InstallInit(ctx *middleware.Context) {
