@@ -878,6 +878,8 @@ const (
 	COMMENT_TYPE_COMMIT
 	// Reference from some pull request
 	COMMENT_TYPE_PULL
+	// Pull request merged
+	COMMENT_TYPE_MERGED
 )
 
 // Comment represents a comment in commit and issue page.
@@ -977,6 +979,30 @@ func CreateComment(userId, repoId, issueId int64, commitId, line string,
 				sess.Rollback()
 				return nil, err
 			}
+		}
+
+		if _, err := sess.Id(issueId).Cols("is_closed").Update(&Issue{IsClosed: true}); err != nil {
+			sess.Rollback()
+			return nil, err
+		}
+	case COMMENT_TYPE_MERGED:
+		var issue Issue
+		has, err := sess.Id(issueId).Get(&issue)
+		if err != nil {
+			return nil, err
+		}
+		if !has {
+			return nil, ErrIssueNotExist
+		}
+
+		if _, err := sess.Id(issueId).Cols("is_merged").Update(&PullRepo{IsMerged: true}); err != nil {
+			sess.Rollback()
+			return nil, err
+		}
+		rawSql := "UPDATE `repository` SET num_closed_pulls = num_closed_pulls + 1 WHERE id = ?"
+		if _, err := sess.Exec(rawSql, repoId); err != nil {
+			sess.Rollback()
+			return nil, err
 		}
 
 		if _, err := sess.Id(issueId).Cols("is_closed").Update(&Issue{IsClosed: true}); err != nil {

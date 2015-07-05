@@ -7,13 +7,17 @@ package repo
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
+	"path/filepath"
+	"time"
 
 	"github.com/go-gitea/gitea/models"
 	"github.com/go-gitea/gitea/modules/auth"
 	"github.com/go-gitea/gitea/modules/base"
 	"github.com/go-gitea/gitea/modules/git"
 	"github.com/go-gitea/gitea/modules/middleware"
+	"github.com/go-gitea/gitea/modules/process"
 	"github.com/go-gitea/gitea/modules/setting"
 )
 
@@ -258,7 +262,7 @@ func PullComment(ctx *middleware.Context) {
 	repoID := ctx.Repo.Repository.ID
 	userID := ctx.User.Id
 	issueID := ctx.QueryInt64("issueID")
-	issueIndex := ctx.QueryInt("issueIndex")
+	issueIndex := ctx.ParamsInt64(":id")
 	content := ctx.Query("content")
 	submit := ctx.Query("submit")
 
@@ -284,15 +288,98 @@ func PullComment(ctx *middleware.Context) {
 	ctx.Redirect(fmt.Sprintf("%s/pull/%d", repoLink, issueIndex))
 }
 
+func pullRequestMerge(tmpPath, branchName, remoteBranch, srcRepoPath, prRepoPath string) (err error) {
+	fmt.Println(tmpPath, branchName, remoteBranch, srcRepoPath, prRepoPath)
+	var stderr string
+	if _, stderr, err = process.ExecDir(-1,
+		tmpPath, fmt.Sprintf("pullRequestMerge(git clone): %s", tmpPath),
+		"git", "clone", "-b", branchName, srcRepoPath, "repo"); err != nil {
+		return errors.New("git clone: " + stderr)
+	}
+
+	repoPath := filepath.Join(tmpPath, "repo")
+	var remoteName string = "pr"
+	if _, stderr, err = process.ExecDir(-1,
+		repoPath, fmt.Sprintf("pullRequestMerge(git remote): %s", tmpPath),
+		"git", "remote", "add", remoteName, prRepoPath); err != nil {
+		return errors.New("git remote: " + stderr)
+	}
+
+	if _, stderr, err = process.ExecDir(-1,
+		repoPath, fmt.Sprintf("pullRequestMerge(git pull): %s", tmpPath),
+		"git", "pull", "--ff-only", "-q", remoteName, remoteBranch); err != nil {
+		return errors.New("git pull: " + stderr)
+	}
+
+	if _, stderr, err = process.ExecDir(-1,
+		repoPath, fmt.Sprintf("pullRequestMerge(git push): %s", tmpPath),
+		"git", "push", "origin", branchName); err != nil {
+		return errors.New("git push: " + stderr)
+	}
+
+	os.RemoveAll(tmpPath)
+	return nil
+}
+
 // merge pulls
 func PullMerge(ctx *middleware.Context) {
-	//issueID := ctx.ParamsInt64(":id")
-	//repo := ctx.Repo.Repository
-	/*pull, err := models.NewRepoPull(repo.Id, issueID)
-	if err != nil {
-		ctx.Handle(500, "GetPullRepoById", err)
-		return
-	}*/
+	repoID := ctx.Repo.Repository.ID
+	userID := ctx.User.Id
+	issueID := ctx.QueryInt64("issueID")
+	issueIndex := ctx.ParamsInt64(":id")
+	content := ctx.Query("content")
 
-	ctx.Redirect(ctx.Repo.RepoLink)
+	// TODO: transaction
+	_, err := models.CreateComment(userID, repoID, issueID, "", "",
+			models.COMMENT_TYPE_MERGED, content, nil)
+	if err != nil {
+		ctx.Handle(500, "CreateComment", err)
+		return
+	}
+
+	pull, err := models.GetRepoPullByIssueID(issueID)
+	if err != nil {
+		ctx.Handle(500, "GetIssueById", err)
+		return
+	}
+
+	if err = pull.GetFromRepo(); err != nil {
+		ctx.Handle(500, "GetFromRepo", err)
+		return
+	}
+
+	if err = pull.GetToRepo(); err != nil {
+		ctx.Handle(500, "GetToRepo", err)
+		return
+	}
+
+	tmpDir := filepath.Join(os.TempDir(), fmt.Sprintf("%d", time.Now().Nanosecond()))
+	os.MkdirAll(tmpDir, os.ModePerm)
+
+	srcRepoPath, err := pull.ToRepo.RepoPath()
+	if err != nil {
+		ctx.Handle(500, "RepoPath", err)
+		return
+	}
+
+	prRepoPath, err := pull.FromRepo.RepoPath()
+	if err != nil {
+		ctx.Handle(500, "RepoPath", err)
+		return
+	}
+
+	err = pullRequestMerge(tmpDir, pull.ToBranch, pull.FromBranch, 
+		srcRepoPath, prRepoPath)
+	if err != nil {
+		ctx.Handle(500, "pullRequestMerge", err)
+		return
+	}
+
+	repoLink, err := ctx.Repo.Repository.RepoLink()
+	if err != nil {
+		ctx.Handle(500, "RepoLink", err)
+		return
+	}
+
+	ctx.Redirect(fmt.Sprintf("%s/pull/%d", repoLink, issueIndex))
 }

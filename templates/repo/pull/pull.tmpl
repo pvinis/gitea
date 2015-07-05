@@ -15,9 +15,9 @@
                 </div>
             </div>
             <div class="pr-meta">
-                <button class="btn btn-small {{if .Issue.IsClosed}}btn-red{{else}}btn-green{{end}} btn-radius">
+                <button class="btn btn-small {{if .Pull.IsClosed}}btn-red{{else if .Pull.IsMerged}}btn-orange{{else}}btn-green{{end}} btn-radius">
                 <i class="octicon octicon-git-pull-request"></i>
-                    {{if .Issue.IsClosed}}Closed{{else}}Open{{end}}
+                    {{if .Pull.IsClosed}}Closed{{else if .Pull.IsMerged}}Merged{{else}}Open{{end}}
                 </button>
             <span class="msg">
                 <a href="#" class="text-bold pr-author">{{.Issue.Poster.Name}}</a> <span class="label radius label-blue">{{.CommitCount}}</span> commits
@@ -105,7 +105,14 @@
                     <div class="issue-commit clear">
                         <i class="mega-octicon octicon-issue-closed left"></i>
                         <a class="author-avatar left" href="{{AppSubUrl}}/{{.Poster.Name}}"><img class="avatar-24 radius" src="{{.Poster.AvatarLink}}" alt="{{.Poster.Name}}"/></a>
-                        <span class="message">{{.Poster.Name}} closed this {{TimeSince .Created $.Lang}}</span>
+                        <span class="message"><a class="author-name" href="#">{{.Poster.Name}}</a> closed this {{TimeSince .Created $.Lang}}</span>
+                    </div>
+                    {{else if eq .Type 6}}
+                    <div class="issue-commit clear">
+                        <i class="mega-octicon octicon-git-commit left"></i>
+                        <a class="author-avatar left" href="{{AppSubUrl}}/{{.Poster.Name}}"><img class="avatar-24 radius" src="{{.Poster.AvatarLink}}" alt="{{.Poster.Name}}"/></a>
+                        <a class="author-name" href="#">{{.Poster.Name}}</a> merged commit <a class="sha right" href="#">8e259ba</a> into repouser:branchname {{TimeSince .Created $.Lang}}
+                        <span class="message">{{.Content}}</span>
                     </div>
                     {{else}}
                     {{.Type}}
@@ -129,8 +136,10 @@
 										Merge Pull Request
 									</button>
                                 </div>
-                                <form id="pr-merge-form" action="#" method="post" class="hide">
+                                <form id="pr-merge-form" action="{{AppSubUrl}}{{.RepoLink}}/pull/{{.Issue.Index}}/merge" method="post" class="hide">
                                 	<h3>Merge pull request #{{.Issue.Index}} from {{.FromRepo.Owner.Name}}/{{.Pull.FromBranch}}</h3>
+                                     {{.CsrfTokenHtml}}
+                                    <input type="hidden" name="issueID" value="{{.Pull.PullID}}">
                                 	<textarea class="ipt ipt-radius" name="content" id="pr-merge-content"></textarea>
                                 	<p class="submit text-right">
                                 		<button class="btn btn-gray btn-radius text-bold" type="reset" id="pr-merge-cancel-btn">Cancel</button>

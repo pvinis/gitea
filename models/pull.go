@@ -26,10 +26,12 @@ var ErrPullRequestNotExist = errors.New("Pull request does not exist")
 type PullRepo struct {
 	ID           int64 `xorm:"pk autoincr"`
 	PullID       int64 `xorm:"unique"` // issueID
-	FromRepoID   int64
 	*Issue       `xorm:"-"`
+	FromRepoID   int64
+	FromRepo *Repository `xorm:"-"`
 	FromBranch   string
 	ToRepoID     int64
+	ToRepo *Repository `xorm:"-"`
 	ToBranch     string
 	CanAutoMerge bool
 	IsMerged     bool
@@ -51,6 +53,16 @@ func (p *PullRepo) GetIssue() error {
 	}
 	p.Issue = &issue
 	return nil
+}
+
+func (p *PullRepo) GetFromRepo() (err error) {
+	p.FromRepo, err = GetRepositoryById(p.FromRepoID)
+	return
+}
+
+func (p *PullRepo) GetToRepo() (err error) {
+	p.ToRepo, err = GetRepositoryById(p.ToRepoID)
+	return
 }
 
 func GetRepoPullByIssueID(issueID int64) (*PullRepo, error) {
