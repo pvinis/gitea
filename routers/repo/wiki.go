@@ -37,7 +37,7 @@ func Wiki(ctx *middleware.Context) {
 		return
 	}
 
-	has, err := models.HasWikiPage(wr, "Home")
+	has, err := models.HasWikiPage(wr, "home")
 	if err != nil {
 		ctx.Handle(500, "wiki.Wiki", err)
 		return
