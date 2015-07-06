@@ -132,6 +132,22 @@ func (p *WikiPage) commitChanges(repoRealPath, commitMsg string, sig *git.Signat
 	return err
 }
 
+func HasWikiPage(r *Repository, a string) (bool, error) {
+	wikiRepoPath, err := r.WikiRepoPath()
+	if err != nil {
+		return false, err
+	}
+
+	filename := fmt.Sprintf("%s/%s.md", wikiRepoPath, a)
+	if _, err := os.Stat(filename); err == nil {
+		return true, nil
+	}
+	if _, err = os.Stat(filename); os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
 func GetWikiPage(r *Repository, a string) (*WikiPage, error) {
 	p := &WikiPage {
 		Alias: a,

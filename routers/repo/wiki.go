@@ -34,12 +34,26 @@ func Wiki(ctx *middleware.Context) {
 	canWrite, err := models.HasAccess(ctx.User, wr, models.ACCESS_MODE_WRITE)
 	if err != nil {
 		ctx.Handle(500, "wiki.Wiki", err)
+		return
+	}
+
+	has, err := models.HasWikiPage(wr, "Home")
+	if err != nil {
+		ctx.Handle(500, "wiki.Wiki", err)
+		return
+	}
+
+	if !has {
+		ctx.HTML(200, WIKI_EMPTY)
+		return
 	}
 
 	p, err := models.GetWikiPage(wr, "home")
 	if err != nil {
 		ctx.Handle(500, "wiki.Wiki", err)
+		return
 	}
+
 	ctx.Data["Page"] = p
 	ctx.Data["CanWrite"] = canWrite
 	ctx.Data["FileContent"] = string(base.RenderMarkdown([]byte(p.Content), ctx.Repo.WikiLink))
@@ -73,6 +87,15 @@ func CreateWikiPage(ctx *middleware.Context) {
 	wr := ctx.Repo.Repository.WikiRepo
 	if wr == nil {
 		ctx.Data["PageTitle"] = "Home"
+	} else {
+		has, err := models.HasWikiPage(wr, "Home")
+		if err != nil {
+			ctx.Handle(500, "wiki.CreateWikiPage", err)
+			return
+		}
+		if !has {
+			ctx.Data["PageTitle"] = "Home"
+		}
 	}
 
 	ctx.Data["IsCreate"] = true
