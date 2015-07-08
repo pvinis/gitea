@@ -182,7 +182,15 @@ func CreateIssue(ctx *middleware.Context) {
 	}
 
 	ctx.Data["AllowedTypes"] = setting.AttachmentAllowedTypes
-	ctx.Data["Collaborators"] = us
+
+	var owners []*models.User
+	if ctx.Repo.Repository.Owner.IsOrganization() {
+		ctx.Repo.Repository.Owner.GetMembers()
+		owners = append(owners, ctx.Repo.Repository.Owner.Members...)
+	} else {
+		owners = append(owners, ctx.Repo.Repository.Owner)
+	}
+	ctx.Data["Collaborators"] = append(owners, us...)
 
 	ctx.HTML(200, ISSUE_CREATE)
 }
@@ -385,11 +393,20 @@ func ViewIssue(ctx *middleware.Context) {
 	}
 
 	// Get all collaborators.
-	ctx.Data["Collaborators"], err = ctx.Repo.Repository.GetCollaborators()
+	collaborators, err := ctx.Repo.Repository.GetCollaborators()
 	if err != nil {
 		ctx.Handle(500, "issue.CreateIssue(GetCollaborators)", err)
 		return
 	}
+
+	var owners []*models.User
+	if ctx.Repo.Repository.Owner.IsOrganization() {
+		ctx.Repo.Repository.Owner.GetMembers()
+		owners = append(owners, ctx.Repo.Repository.Owner.Members...)
+	} else {
+		owners = append(owners, ctx.Repo.Repository.Owner)
+	}
+	ctx.Data["Collaborators"] = append(owners, collaborators...)
 
 	if ctx.IsSigned {
 		// Update issue-user.
