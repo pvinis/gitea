@@ -1086,7 +1086,13 @@ function initWikiPage() {
     $('.remove-wiki-page').click(function () {
         if (confirm('Are you sure?')) {
             var wiki = document.location.href.match(/([a-zA-Z0-9.:\/\/]+)\/wiki\/([a-z0-9]+)/);
-            var url = wiki[0] + '/remove';
+            var url;
+            if (wiki != null) {
+              url = wiki[0] + '/remove';
+            } else {
+                wiki = document.location.href.match(/([a-zA-Z0-9.:\/\/]+)\/wiki/);
+                url = wiki[0] + '/home/remove';
+            }
             var redirectUrl = wiki[1] + '/wiki';
             $.ajax({
                 url: url,
