@@ -1,7 +1,7 @@
 [run]
 init_cmds = [
 	#["grep", "-rn", "FIXME", "."],
-	["./gogs", "web"]
+	["./gitea", "web"]
 ]
 watch_all = true
 watch_dirs = [
@@ -16,5 +16,5 @@ cmds = [
 	#["go-bindata", "-o=modules/bindata/bindata.go", "-ignore=\\.DS_Store|README", "-pkg=bindata", "conf/..."],
 	["go", "install", "-tags", "sqlite cert"],# redis memcache
 	["go", "build", "-tags", "sqlite cert"],
-	["./gogs", "web"]
+	["./gitea", "web"]
 ]
