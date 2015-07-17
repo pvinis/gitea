@@ -24,7 +24,7 @@ _cgo_export.*
 _testmain.go
 *.exe
 *.exe~
-/gogs
+/gitea
 gitea
 profile/
 __pycache__
