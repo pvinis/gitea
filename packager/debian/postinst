@@ -2,7 +2,7 @@
 
 set -e
 
-APP_NAME="gogs"
+APP_NAME="gitea"
 CLI="${APP_NAME}"
 APP_USER=$(${CLI} config:get APP_USER)
 APP_GROUP=$(${CLI} config:get APP_GROUP)

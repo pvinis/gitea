@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -323,7 +324,7 @@ func SmtpAuth(host string, port int, a smtp.Auth, useTls bool) error {
 	}
 	defer c.Close()
 
-	if err = c.Hello("gogs"); err != nil {
+	if err = c.Hello("gitea"); err != nil {
 		return err
 	}
 

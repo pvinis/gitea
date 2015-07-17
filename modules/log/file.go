@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -86,7 +87,7 @@ func NewFileWriter() LoggerInterface {
 // Init file logger with json config.
 // config like:
 //	{
-//	"filename":"log/gogs.log",
+//	"filename":"log/gitea.log",
 //	"maxlines":10000,
 //	"maxsize":1<<30,
 //	"daily":true,

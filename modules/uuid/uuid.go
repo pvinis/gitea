@@ -1,4 +1,6 @@
 // Copyright (C) 2013 by Maxim Bublis <b@codemonkey.ru>
+// Copyright (C) 2014-2015 The Gogs Authors
+// Copyright (C) 2015 The Gitea Authors
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

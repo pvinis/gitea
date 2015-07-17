@@ -2,14 +2,14 @@
 	<footer class="ui page grid">
 		<div class="sixteen wide column">
 			<div class="ui left">
-				© 2015 Gogs · {{.i18n.Tr "version"}}: {{AppVer}} · {{.i18n.Tr "page"}}: <strong>{{LoadTimes .PageStartTime}}</strong> · {{.i18n.Tr "template"}}: <strong>{{call .TmplLoadTimes}}</strong>
+				&copy; 2015 Gitea · {{.i18n.Tr "version"}}: {{AppVer}} · {{.i18n.Tr "page"}}: <strong>{{LoadTimes .PageStartTime}}</strong> · {{.i18n.Tr "template"}}: <strong>{{call .TmplLoadTimes}}</strong>
 			</div>
 			<div class="ui right links">
 				{{if .ShowFooterBranding}}
 				<a target="_blank" href="https://github.com/go-gitea/gitea"><i class="fa fa-github-square"></i><span class="sr-only">GitHub</span></a>
 				<a target="_blank" href="https://twitter.com/gogitservice"><i class="fa fa-twitter"></i><span class="sr-only">Twitter</span></a>
 				<a target="_blank" href="https://plus.google.com/communities/115599856376145964459"><i class="fa fa-google-plus"></i><span class="sr-only">Google Plus</span></a>
-				<a target="_blank" href="http://weibo.com/gogschina"><i class="fa fa-weibo"></i><span class="sr-only">Sina Weibo</span></a>
+				<a target="_blank" href="http://weibo.com/giteachina"><i class="fa fa-weibo"></i><span class="sr-only">Sina Weibo</span></a>
 				{{end}}
 				<div class="ui language bottom pointing dropdown link item">
           <i class="world icon"></i>
@@ -20,7 +20,7 @@
   						{{end}}
 						</div>
         </div>
-				<a target="_blank" href="http://gogs.io">{{.i18n.Tr "website"}}</a>
+				<a target="_blank" href="http://gitea.io">{{.i18n.Tr "website"}}</a>
 				<span class="version">{{GoVer}}</span>
 			</div>
 		</div>

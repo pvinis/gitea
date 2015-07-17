@@ -1,23 +1,23 @@
-Gogs - Go Git Service [![Build Status](https://travis-ci.org/gogits/gogs.svg?branch=master)](https://travis-ci.org/gogits/gogs)
-=====================
+Gitea - Git service with a cup of tea [![Build Status](https://travis-ci.org/go-gitea/gitea.svg?branch=master)](https://travis-ci.org/gogits/gogs)
+=====================================
 
-Gogs (Go Git Service) 是一款可轻易搭建的自助 Git 服务。
+Gitea (Git service with a cup of tea) 是一款可轻易搭建的自助 Git 服务。
 
-![Demo](http://gogs.qiniudn.com/gogs_demo.gif)
+![Demo](screenshots/demo.gif)
 
 ##### 当前版本：0.6.1 Beta
 
 ## 开发目的
 
-Gogs 的目标是打造一个最简单、最快速和最轻松的方式搭建自助 Git 服务。使用 Go 语言开发使得 Gogs 能够通过独立的二进制分发，并且支持 Go 语言支持的 **所有平台**，包括 Linux、Mac OS X 以及 Windows。
+Gitea 的目标是打造一个最简单、最快速和最轻松的方式搭建自助 Git 服务。使用 Go 语言开发使得 Gitea 能够通过独立的二进制分发，并且支持 Go 语言支持的 **所有平台**，包括 Linux、Mac OS X 以及 Windows。
 
 ## 项目概览
 
-- 有关项目设计、已知问题和变更日志，请通过 [使用手册](http://gogs.io/docs/intro/) 查看。
+- 有关项目设计、已知问题和变更日志，请通过 [使用手册](http://gitea.io/docs/intro/) 查看。
 - 您可以到 [Trello Board](https://trello.com/b/uxAoeLUl/gogs-go-git-service) 跟随开发团队的脚步。
 - 想要先睹为快？通过 [在线体验](https://try.gogs.io/unknwon/gogs) 或查看 **安装部署 -> 二进制安装** 小节。
-- 使用过程中遇到问题？尝试从 [故障排查](http://gogs.io/docs/intro/troubleshooting.md) 页面获取帮助。
-- 希望帮助多国语言界面的翻译吗？请立即访问 [详情页面](http://gogs.io/docs/features/i18n.html)！
+- 使用过程中遇到问题？尝试从 [故障排查](http://gitea.io/docs/intro/troubleshooting.md) 页面获取帮助。
+- 希望帮助多国语言界面的翻译吗？请立即访问 [详情页面](http://gitea.io/docs/features/i18n.html)！
 
 ## 功能特性
 
@@ -48,13 +48,13 @@ Gogs 的目标是打造一个最简单、最快速和最轻松的方式搭建自
 
 ## 安装部署
 
-在安装 Gogs 之前，您需要先安装 [基本环境](http://gogs.io/docs/installation/)。
+在安装 Gitea 之前，您需要先安装 [基本环境](http://gitea.io/docs/installation/)。
 
-然后，您可以通过以下 5 种方式来安装 Gogs：
+然后，您可以通过以下 5 种方式来安装 Gitea：
 
-- [二进制安装](http://gogs.io/docs/installation/install_from_binary.md)
-- [源码安装](http://gogs.io/docs/installation/install_from_source.md)
-- [包管理安装](http://gogs.io/docs/installation/install_from_packages.md)
+- [二进制安装](http://gitea.io/docs/installation/install_from_binary.md)
+- [源码安装](http://gitea.io/docs/installation/install_from_source.md)
+- [包管理安装](http://gitea.io/docs/installation/install_from_packages.md)
 - [采用 Docker 部署](https://github.com/go-gitea/gitea/tree/master/docker)
 - [通过 Vagrant 安装](https://github.com/geerlingguy/ansible-vagrant-examples/tree/master/gogs)
 
@@ -69,7 +69,7 @@ Gogs 的目标是打造一个最简单、最快速和最轻松的方式搭建自
 
 ## 贡献成员
 
-- 本项目的 [开发团队](http://gogs.io/team)。
+- 本项目的 [开发团队](http://gitea.io/team)。
 - 您可以通过查看 [贡献者页面](https://github.com/go-gitea/gitea/graphs/contributors) 获取完整的贡献者列表。
 - 您可以通过查看 [TRANSLATORS](conf/locale/TRANSLATORS) 文件获取完整的翻译人员列表。
 

@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -24,7 +25,7 @@ var (
 	DEFAULT = 60 * time.Second
 )
 
-// Process represents a working process inherit from Gogs.
+// Process represents a working process inherit from Gitea.
 type Process struct {
 	Pid         int64 // Process ID, not system one.
 	Description string

@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -56,7 +57,7 @@ func handleServerConn(keyId string, chans <-chan ssh.NewChannel) {
 				case "exec":
 					os.Setenv("SSH_ORIGINAL_COMMAND", strings.TrimLeft(payload, "'("))
 					log.Info("Payload: %v", strings.TrimLeft(payload, "'("))
-					cmd := exec.Command("/Users/jiahuachen/Applications/Go/src/github.com/go-gitea/gitea/gogs", "serv", "key-"+keyId)
+					cmd := exec.Command("/Users/jiahuachen/Applications/Go/src/github.com/go-gitea/gitea/gitea", "serv", "key-"+keyId)
 					cmd.Stdout = channel
 					cmd.Stdin = channel
 					cmd.Stderr = channel.Stderr()

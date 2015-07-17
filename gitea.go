@@ -1,11 +1,11 @@
 // +build go1.2
 
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
 // Copyright 2015 The Gitea Authors. All rights reserved.
-// Copyright 2014 The Gogs Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-// Gogs(Go Git Service) is a painless self-hosted Git Service written in Go.
+// Gitea (Git service with a cup of tea) is a painless self-hosted Git Service written in Go.
 package main
 
 import (

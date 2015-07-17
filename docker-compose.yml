@@ -8,5 +8,5 @@ web:
 mysql:
   image: mysql
   environment:
-    - MYSQL_ROOT_PASSWORD=gogs
-    - MYSQL_DATABASE=gogs
+    - MYSQL_ROOT_PASSWORD=gitea
+    - MYSQL_DATABASE=gitea

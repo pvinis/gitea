@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -172,12 +173,12 @@ func GetActiveWebhooksByOrgId(orgId int64) (ws []*Webhook, err error) {
 type HookTaskType int
 
 const (
-	GOGS HookTaskType = iota + 1
+	GITEA HookTaskType = iota + 1
 	SLACK
 )
 
 var hookTaskTypes = map[string]HookTaskType{
-	"gogs":  GOGS,
+	"gitea":  GITEA,
 	"slack": SLACK,
 }
 
@@ -188,8 +189,8 @@ func ToHookTaskType(name string) HookTaskType {
 
 func (t HookTaskType) Name() string {
 	switch t {
-	case GOGS:
-		return "gogs"
+	case GITEA:
+		return "gitea"
 	case SLACK:
 		return "slack"
 	}
@@ -313,8 +314,8 @@ func DeliverHooks() {
 		func(idx int, bean interface{}) error {
 			t := bean.(*HookTask)
 			req := httplib.Post(t.Url).SetTimeout(timeout, timeout).
-				Header("X-Gogs-Delivery", t.Uuid).
-				Header("X-Gogs-Event", string(t.EventType)).
+				Header("X-Gitea-Delivery", t.Uuid).
+				Header("X-Gitea-Event", string(t.EventType)).
 				SetTLSClientConfig(&tls.Config{InsecureSkipVerify: setting.Webhook.SkipTLSVerify})
 
 			switch t.ContentType {
@@ -328,7 +329,7 @@ func DeliverHooks() {
 
 			// FIXME: record response.
 			switch t.Type {
-			case GOGS:
+			case GITEA:
 				{
 					if _, err := req.Response(); err != nil {
 						log.Error(5, "Delivery: %v", err)

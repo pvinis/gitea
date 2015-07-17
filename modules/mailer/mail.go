@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -158,7 +159,7 @@ func SendResetPasswdMail(r macaron.Render, u *models.User) {
 func SendIssueNotifyMail(u, owner *models.User, repo *models.Repository, issue *models.Issue) ([]string, error) {
 
 	subject := fmt.Sprintf("[%s] %s(#%d)", repo.Name, issue.Name, issue.Index)
-	content := fmt.Sprintf("%s<br>-<br> <a href=\"%s%s/%s/issues/%d\">View it on Gogs</a>.",
+	content := fmt.Sprintf("%s<br>-<br> <a href=\"%s%s/%s/issues/%d\">View it on Gitea</a>.",
 		base.RenderSpecialLink([]byte(issue.Content), owner.Name+"/"+repo.Name),
 		setting.AppUrl, owner.Name, repo.Name, issue.Index)
 
@@ -171,7 +172,7 @@ func SendIssueNotifyMail(u, owner *models.User, repo *models.Repository, issue *
 func SendCommentNotifyMail(u, owner *models.User, repo *models.Repository, comment *models.Comment) ([]string, error) {
 
 	subject := fmt.Sprintf("[%s] New comment to commit %s", repo.Name, comment.CommitId)
-	content := fmt.Sprintf("%s<br>-<br> <a href=\"%s%s/%s/commit/%s\">View it on Gogs</a>.",
+	content := fmt.Sprintf("%s<br>-<br> <a href=\"%s%s/%s/commit/%s\">View it on Gitea</a>.",
 		base.RenderSpecialLink([]byte(comment.Content), owner.Name+"/"+repo.Name),
 		setting.AppUrl, owner.Name, repo.Name, comment.CommitId)
 

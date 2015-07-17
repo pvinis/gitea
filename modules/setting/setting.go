@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -191,7 +192,7 @@ func NewConfigContext() {
 		log.Fatal(4, "Fail to parse 'conf/app.ini': %v", err)
 	}
 
-	CustomPath = os.Getenv("GOGS_CUSTOM")
+	CustomPath = os.Getenv("GITEA_CUSTOM")
 	if len(CustomPath) == 0 {
 		CustomPath = path.Join(workDir, "custom")
 	}
@@ -213,7 +214,7 @@ func NewConfigContext() {
 	forcePathSeparator(LogRootPath)
 
 	sec := Cfg.Section("server")
-	AppName = Cfg.Section("").Key("APP_NAME").MustString("Gogs: Go Git Service")
+	AppName = Cfg.Section("").Key("APP_NAME").MustString("Gitea: Git service with a cup of tea")
 	AppUrl = sec.Key("ROOT_URL").MustString("http://localhost:3000/")
 	if AppUrl[len(AppUrl)-1] != '/' {
 		AppUrl += "/"
@@ -306,7 +307,7 @@ func NewConfigContext() {
 	homeDir = strings.Replace(homeDir, "\\", "/", -1)
 
 	sec = Cfg.Section("repository")
-	RepoRootPath = sec.Key("ROOT").MustString(path.Join(homeDir, "gogs-repositories"))
+	RepoRootPath = sec.Key("ROOT").MustString(path.Join(homeDir, "gitea-repositories"))
 	forcePathSeparator(RepoRootPath)
 	if !filepath.IsAbs(RepoRootPath) {
 		RepoRootPath = path.Join(workDir, RepoRootPath)
@@ -406,7 +407,7 @@ func newLogService() {
 		case "console":
 			LogConfigs[i] = fmt.Sprintf(`{"level":%s}`, level)
 		case "file":
-			logPath := sec.Key("FILE_NAME").MustString(path.Join(LogRootPath, "gogs.log"))
+			logPath := sec.Key("FILE_NAME").MustString(path.Join(LogRootPath, "gitea.log"))
 			os.MkdirAll(path.Dir(logPath), os.ModePerm)
 			LogConfigs[i] = fmt.Sprintf(
 				`{"level":%s,"filename":"%s","rotate":%v,"maxlines":%d,"maxsize":%d,"daily":%v,"maxdays":%d}`, level,

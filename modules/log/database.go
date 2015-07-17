@@ -1,4 +1,5 @@
-// Copyright 2014 The Gogs Authors. All rights reserved.
+// Copyright 2014-2015 The Gogs Authors. All rights reserved.
+// Copyright 2015 The Gitea Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -32,7 +33,7 @@ func NewDatabase() LoggerInterface {
 // config like:
 //	{
 //		"driver": "mysql"
-//		"conn":"root:root@tcp(127.0.0.1:3306)/gogs?charset=utf8",
+//		"conn":"root:root@tcp(127.0.0.1:3306)/gitea?charset=utf8",
 //		"level": 0
 //	}
 // connection string is based on xorm.

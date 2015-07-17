@@ -1,4 +1,4 @@
-gogs:
+gitea:
   build: docker
   links:
     - session

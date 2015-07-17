@@ -6,14 +6,14 @@ template_dir=templates
 
 docker_file=Dockerfile
 
-gogs_config_file=conf.tmp
-gogs_config=config
-gogs_init_file=$docker_dir/init_gogs.sh
+gitea_config_file=conf.tmp
+gitea_config=config
+gitea_init_file=$docker_dir/init_gitea.sh
 
 fig_file=fig.yml
 fig_config=fig
 
-gogs_init_template=$template_dir/init_gogs.sh.tpl
+gitea_init_template=$template_dir/init_gitea.sh.tpl
 
 if [ "$#" == 0 ]; then
     blocks=`ls $blocks_dir`
@@ -28,7 +28,7 @@ if [ "$#" == 0 ]; then
     exit 0
 fi
 
-for file in $gogs_config_file $fig_file; do
+for file in $gitea_config_file $fig_file; do
     if [ -e $file ]; then
         echo "Deleting $file"
         rm $file
@@ -47,10 +47,10 @@ for dir in $@; do
         cp $current_dir/$docker_file $docker_dir/$docker_file
     fi
 
-    if [ -e $current_dir/$gogs_config ]; then
-        echo "Adding $current_dir/$gogs_config to $gogs_config_file"
-        cat $current_dir/$gogs_config >> $gogs_config_file
-        echo "" >> $gogs_config_file
+    if [ -e $current_dir/$gitea_config ]; then
+        echo "Adding $current_dir/$gitea_config to $gitea_config_file"
+        cat $current_dir/$gitea_config >> $gitea_config_file
+        echo "" >> $gitea_config_file
     fi
 
     if [ -e $current_dir/$fig_config ]; then
@@ -60,13 +60,13 @@ for dir in $@; do
     fi
 done
 
-echo "Creating $gogs_init_file"
+echo "Creating $gitea_init_file"
 sed "/{{ CONFIG }}/{
-r $gogs_config_file
+r $gitea_config_file
 d
-}" $gogs_init_template > $gogs_init_file
+}" $gitea_init_template > $gitea_init_file
 
-if [ -e $gogs_config_file ]; then
-    echo "Removing temporary GoGS config"
-    rm $gogs_config_file
+if [ -e $gitea_config_file ]; then
+    echo "Removing temporary Gitea config"
+    rm $gitea_config_file
 fi
