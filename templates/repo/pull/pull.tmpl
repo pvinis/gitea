@@ -10,17 +10,17 @@
                 	{{.Issue.Name}} <span class="pr-num">#{{.Issue.Index}}</span>
                 </h2>
                 <div class="pr-title-btn grid-1-6 right text-right">
-                    <button class="btn btn-gray btn-radius">Edit</button><!--&nbsp;&nbsp;
+                    <button class="btn btn-gray btn-radius">{{.i18n.Tr "edit"}}</button><!--&nbsp;&nbsp;
                     <a href="#"><button class="btn btn-green btn-radius">New Pull Request</button></a>-->
                 </div>
             </div>
             <div class="pr-meta">
                 <button class="btn btn-small {{if .Pull.IsClosed}}btn-red{{else if .Pull.IsMerged}}btn-orange{{else}}btn-green{{end}} btn-radius">
                 <i class="octicon octicon-git-pull-request"></i>
-                    {{if .Pull.IsClosed}}Closed{{else if .Pull.IsMerged}}Merged{{else}}Open{{end}}
+                    {{if .Pull.IsClosed}}{{.i18n.Tr "closed"}}{{else if .Pull.IsMerged}}{{.i18n.Tr "merged"}}{{else}}{{.i18n.Tr "opened"}}{{end}}
                 </button>
             <span class="msg">
-                <a href="#" class="text-bold pr-author">{{.Issue.Poster.Name}}</a> <span class="label radius label-blue">{{.CommitCount}}</span> commits
+                <a href="#" class="text-bold pr-author">{{.Issue.Poster.Name}}</a> <span class="label radius label-blue">{{.CommitCount}}</span> {{.i18n.Tr "repo.pulls.commits"}}
                 <span class="pr-branch label label-gray radius">{{.FromRepo.Owner.Name}}:{{.Pull.FromBranch}}</span>
                 <i class="octicon octicon-arrow-right"></i>
                 <span class="pr-branch label label-gray radius">{{.Pull.ToBranch}}</span>
@@ -28,13 +28,13 @@
             </div>
             <div class="pr-nav clear">
                 <ul class="menu menu-line left" id="pr-nav">
-                    <li class="current js-tab-nav js-tab-nav-show" data-tab-target="#pr-conversation"><a href="#"><i class="octicon octicon-comment"></i>conversations
+                    <li class="current js-tab-nav js-tab-nav-show" data-tab-target="#pr-conversation"><a href="#"><i class="octicon octicon-comment"></i>{{.i18n.Tr "repo.pulls.conversations"}}
                         <span class="label label-gray label-radius">{{.CountComments}}</span>
                     </a></li>
-                    <li class="js-tab-nav" data-tab-target="#pr-commit"><a href="#"><i class="octicon octicon-git-commit"></i>commits
+                    <li class="js-tab-nav" data-tab-target="#pr-commit"><a href="#"><i class="octicon octicon-git-commit"></i>{{.i18n.Tr "repo.pulls.commits"}}
                         <span class="label label-gray label-radius">{{.CommitCount}}</span>
                     </a></li>
-                    <li class="js-tab-nav" data-tab-target="#pr-file-diff"><a href="#"><i class="octicon octicon-file-code"></i>files
+                    <li class="js-tab-nav" data-tab-target="#pr-file-diff"><a href="#"><i class="octicon octicon-file-code"></i>{{.i18n.Tr "repo.pulls.files"}}
                         <span class="label label-gray label-radius">{{len .Diff.Files}}</span>
                     </a></li>
                 </ul>
@@ -54,7 +54,7 @@
                             <p class="panel-header clear"><a class="author-name" href="#">{{.Issue.Poster.Name}}</a>
                                 <span class="date">{{TimeSince .Issue.Created $.Lang}}</span>
                             <span class="action right">
-                                <span class="label label-black label-radius">owner</span>
+                                <span class="label label-black label-radius">{{.i18n.Tr "repo.pulls.owner"}}</span>
                                 <!--TODO: complete this -->
                                 <!--<a href="#"><i class="octicon octicon-pencil"></i></a>
                                 <a href="#"><i class="octicon octicon-x"></i></a>
@@ -72,7 +72,7 @@
                             <p class="panel-header clear"><a class="author-name" href="#">{{.Poster.Name}}</a>
                                 <span class="date">{{TimeSince .Created $.Lang}}</span>
                             <span class="action right">
-                                {{if eq .PosterId $.Issue.PosterID}}<span class="label label-black label-radius">owner</span>{{end}}
+                                {{if eq .PosterId $.Issue.PosterID}}<span class="label label-black label-radius">{{.i18n.Tr "repo.pulls.owner"}}</span>{{end}}
                                 <!--TODO: complete this -->
                                 <!--<a href="#"><i class="octicon octicon-pencil"></i></a>
                                 <a href="#"><i class="octicon octicon-x"></i></a>
@@ -96,7 +96,7 @@
                             <p class="panel-header clear"><a class="author-name" href="#">{{.Poster.Name}}</a>
                                 <span class="date">{{TimeSince .Created $.Lang}}</span>
                             <span class="action right">
-                                {{if eq .PosterId $.Issue.PosterID}}<span class="label label-black label-radius">owner</span>{{end}}
+                                {{if eq .PosterId $.Issue.PosterID}}<span class="label label-black label-radius">{{.i18n.Tr "repo.pulls.owner"}}</span>{{end}}
                             </span>
                             </p>
                             <div class="panel-content content markdown">{{.Content}}</div>
@@ -105,7 +105,8 @@
                     <div class="issue-commit clear">
                         <i class="mega-octicon octicon-issue-closed left"></i>
                         <a class="author-avatar left" href="{{AppSubUrl}}/{{.Poster.Name}}"><img class="avatar-24 radius" src="{{.Poster.AvatarLink}}" alt="{{.Poster.Name}}"/></a>
-                        <span class="message"><a class="author-name" href="#">{{.Poster.Name}}</a> closed this {{TimeSince .Created $.Lang}}</span>
+                        <span class="message">
+                        {{.i18n.Tr "repo.issues.close_desc" "#" .Poster.Name (TimeSince .Created $.Lang)}}</span>
                     </div>
                     {{else if eq .Type 6}}
                     <div class="issue-commit clear">
@@ -125,25 +126,24 @@
                         {{if .IsAutoMerge}}
                         <div class="panel panel-radius">
                             <p class="panel-header clear">
-                                <i class="octicon octicon-check"></i><strong>All is well !</strong>
+                                <i class="octicon octicon-check"></i><strong>{{.i18n.Tr "merge_check_well"}}</strong>
                             </p>
                             <div class="panel-content content clear">
                             	<div id="pr-merge-notice">
-									<div class="message left"><strong>This pull request can be automatically merged.</strong><br/>
-										You can also merge branches on the <a href="#">command line</a>.</div>
+									<div class="message left">{{.i18n.Tr "repo.pulls.merge_check_hint"}}</div>
 									<button class="btn btn-green right btn-radius" id="pr-merge-btn">
 										<i class="octicon octicon-git-merge"></i>
-										Merge Pull Request
+										{{.i18n.Tr "repo.pulls.merge"}}
 									</button>
                                 </div>
                                 <form id="pr-merge-form" action="{{AppSubUrl}}{{.RepoLink}}/pull/{{.Issue.Index}}/merge" method="post" class="hide">
-                                	<h3>Merge pull request #{{.Issue.Index}} from {{.FromRepo.Owner.Name}}/{{.Pull.FromBranch}}</h3>
+                                	<h3>{{.i18n.Tr "repo.pulls.merge_hint" .Issue.Index .FromRepo.Owner.Name .Pull.FromBranch}}</h3>
                                      {{.CsrfTokenHtml}}
                                     <input type="hidden" name="issueID" value="{{.Pull.PullID}}">
                                 	<textarea class="ipt ipt-radius" name="content" id="pr-merge-content"></textarea>
                                 	<p class="submit text-right">
-                                		<button class="btn btn-gray btn-radius text-bold" type="reset" id="pr-merge-cancel-btn">Cancel</button>
-                                		<button class="btn btn-green btn-radius text-bold" name="submit" value="confirm" id="pr-merge-confirm-btn">Confirm</button>
+                                		<button class="btn btn-gray btn-radius text-bold" type="reset" id="pr-merge-cancel-btn">{{.i18n.Tr "cancel"}}</button>
+                                		<button class="btn btn-green btn-radius text-bold" name="submit" value="confirm" id="pr-merge-confirm-btn">{{.i18n.Tr "confirm"}}</button>
                                 	</p>
                                 </form>
                             </div>
@@ -151,11 +151,10 @@
                         {{else}}
                         <div class="panel panel-radius">
                             <p class="panel-header clear">
-                                <i class="octicon octicon-check"></i><strong>Merge Conflicts</strong>
+                                <i class="octicon octicon-check"></i><strong>{{.i18n.Tr "repo.pulls.merge_check_conflict"}}</strong>
                             </p>
                             <div class="panel-content content clear">
-                                <div class="message left"><strong>This pull request CAN NOT be automatically merged.</strong><br/>
-                                    You can pull request again or merge branches on the <a href="#">command line</a>.</div>
+                                <div class="message left">{{.i18n.Tr "repo.pulls.merge_check_conflict_hint"}}</div>
                             </div>
                         </div>
                         {{end}}
@@ -166,8 +165,8 @@
                         <div class="panel panel-radius">
                             <div class="panel-header">
                                 <ul class="menu menu-line add-nav">
-                                    <li class="js-tab-nav js-tab-nav-show" data-tab-target="#issue-add-comment-form"><a href="#">Write</a></li>
-                                    <li class="js-tab-nav" data-tab-target="#issue-add-comment-preview"><a href="#" id="pull-issue-preview">Preview</a></li>
+                                    <li class="js-tab-nav js-tab-nav-show" data-tab-target="#issue-add-comment-form"><a href="#">{{.i18n.Tr "repo.pulls.write"}}</a></li>
+                                    <li class="js-tab-nav" data-tab-target="#issue-add-comment-preview"><a href="#" id="pull-issue-preview">{{.i18n.Tr "repo.pulls.preview"}}</a></li>
                                 </ul>
                             </div>
                             <div class="panel-content content">
@@ -177,13 +176,13 @@
                                     <input type="hidden" name="issueIndex" value="{{.Issue.Index}}"/>
                                     <textarea class="ipt ipt-radius js-preview-input" name="content" id="issue-add-content"></textarea>
                                     <p class="submit text-right">
-                                        {{if not .Issue.IsClosed}}<button class="btn btn-gray btn-radius text-bold" name="submit" value="close">Close pull request</button>&nbsp;&nbsp;
+                                        {{if not .Issue.IsClosed}}<button class="btn btn-gray btn-radius text-bold" name="submit" value="close">{{.i18n.Tr "repo.pulls.close_pr"}}</button>&nbsp;&nbsp;
                                         {{end}}
-                                        <button class="btn btn-green btn-radius text-bold" name="submit" value="comment">Comment</button>
+                                        <button class="btn btn-green btn-radius text-bold" name="submit" value="comment">{{.i18n.Tr "settings.commits.comment.add"}}</button>
                                     </p>
                                 </form>
                                 <div id="issue-add-comment-preview" class="js-preview-container">
-                                    preview
+                                    {{.i18n.Tr "repo.pulls.preview"}}
                                 </div>
                             </div>
                         </div>

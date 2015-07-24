@@ -71,7 +71,7 @@
         <h4>{{.i18n.Tr "repo.diff.data_not_available"}}</h4>
         {{else}}
         <div class="diff-detail-box diff-box">
-            <a id="pr-create-btn" class="pull-right btn btn-green btn-header btn-radius" href="#">Create Pull Request</a>
+            <a id="pr-create-btn" class="pull-right btn btn-green btn-header btn-radius" href="#">{{.i18n.Tr "repo.pulls.create"}}</a>
             <a id="pr-diff-btn" class="pull-right btn btn-gray btn-header btn-radius text-black" data-target="#diff-files">{{.i18n.Tr "repo.diff.show_diff_stats"}}</a>
 
             <p class="showing">
@@ -82,8 +82,8 @@
             <div class="panel panel-radius pr-create-new hide" id="pr-create-panel">
 				<div class="panel-header">
 					<ul class="menu menu-line add-nav">
-						<li class="js-tab-nav js-tab-nav-show" data-tab-target="#pr-add-comment-form"><a href="#">Write</a></li>
-						<li class="js-tab-nav" data-tab-target="#pr-add-comment-preview"><a href="#" id="pull-add-preview">Preview</a></li>
+						<li class="js-tab-nav js-tab-nav-show" data-tab-target="#pr-add-comment-form"><a href="#">{{.i18n.Tr "repo.pulls.write"}}</a></li>
+						<li class="js-tab-nav" data-tab-target="#pr-add-comment-preview"><a href="#" id="pull-add-preview">{{.i18n.Tr "repo.pulls.preview"}}</a></li>
 					</ul>
 				</div>
 				<div class="panel-content content">
@@ -94,12 +94,12 @@
                         <input type="hidden" name="to" value="{{$beforeRepo.Owner.Name}}:{{$beforeBranch}}"/>
                         <input type="hidden" name="from" value="{{$afterRepo.Owner.Name}}:{{$afterBranch}}"/>
 						<p class="submit text-right">
-							<button class="btn btn-gray btn-radius text-bold" name="submit" value="close" id="pr-create-cancel-btn" type="reset">Cancel</button>&nbsp;&nbsp;
-							<button class="btn btn-green btn-radius text-bold" name="submit" value="comment">Create</button>
+							<button class="btn btn-gray btn-radius text-bold" name="submit" value="close" id="pr-create-cancel-btn" type="reset">{{$.i18n.Tr "cancel"}}</button>&nbsp;&nbsp;
+							<button class="btn btn-green btn-radius text-bold" name="submit" value="comment">{{$.i18n.Tr "repo.pulls.create"}}</button>
 						</p>
 					</form>
 					<div id="pr-add-comment-preview" class="js-preview-container hide">
-						preview
+						{{$.i18n.Tr "repo.pulls.preview"}}
 					</div>
 				</div>
 			</div>

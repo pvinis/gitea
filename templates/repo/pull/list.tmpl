@@ -4,21 +4,21 @@
     {{template "repo/header" .}}
     <div class="issue-main container repo-wide-wrapper">
         <ul id="issue-list-nav" class="menu menu-line">
-			<li><a href="{{.RepoLink}}/issues">Issue</a></li>
-			<li class="current"><a href="{{.RepoLink}}/pulls">Pull Request</a></li>
-			<li><a href="{{.RepoLink}}/issues/labels">Labels</a></li>
-			<li><a href="{{.RepoLink}}/issues/milestones">Milestones</a></li>
-            <li class="right" id="issue-new"><a href="{{.RepoLink}}/compare"><button id="issue-new-btn" class="btn btn-green text-bold">New Pull Request</button></a></li>
+			<li><a href="{{.RepoLink}}/issues">{{.i18n.Tr "issues"}}</a></li>
+			<li class="current"><a href="{{.RepoLink}}/pulls">{{.i18n.Tr "pull_requests"}}</a></li>
+			<li><a href="{{.RepoLink}}/issues/labels">{{.i18n.Tr "labels"}}</a></li>
+			<li><a href="{{.RepoLink}}/issues/milestones">{{.i18n.Tr "milestones"}}</a></li>
+            <li class="right" id="issue-new"><a href="{{.RepoLink}}/compare"><button id="issue-new-btn" class="btn btn-green text-bold">{{.i18n.Tr "repo.pulls.new"}}</button></a></li>
             <!--<li class="right"><a href="#">Filter</a></li>-->
         </ul>
         <div id="issue-list-container">
             <div id="issue-list-menu">
                 <div class="left">
                     <span class="mark open{{if not .IsShowClosed}} hover{{end}}"><a href="{{AppSubUrl}}{{.RepoLink}}/pulls">
-                        <i class="octicon octicon-git-pull-request"></i> {{.IssueStats.OpenCount}} Open
+                        <i class="octicon octicon-git-pull-request"></i> {{.IssueStats.OpenCount}} {{.i18n.Tr "open"}}
                     </a></span>
                     <span class="mark close{{if .IsShowClosed}} hover{{end}}"><a href="{{AppSubUrl}}{{.RepoLink}}/pulls?type=all&state=closed">
-                        <i class="octicon octicon-issue-closed"></i> {{.IssueStats.ClosedCount}} Closed
+                        <i class="octicon octicon-issue-closed"></i> {{.IssueStats.ClosedCount}} {{.i18n.Tr "closed"}}
                     </a></span>
                 </div>
                 <div class="clear"></div>
@@ -33,16 +33,16 @@
                         <i class="octicon octicon-git-pull-request"></i>
                         <a href="{{$.RepoLink}}/pull/{{.Index}}" class="title-text">{{.Name}}</a>
                     </p>
-                    <p class="desc">opened {{TimeSince .Created $.Lang}} by <a href="#">{{.Poster.Name}}</a></p>
+                    <p class="desc">{{.i18n.Tr "repo.issues.open_desc" (TimeSince .Created $.Lang) "#" .Poster.Name}}</a></p>
                 </li>
                 {{end}}
             </ul>
             <div id="issue-list-pager" class="pager text-center">
-                <a class="prev invalid" href="#">Prev</a>
+                <a class="prev invalid" href="#">{{.i18n.Tr "admin.prev"}}</a>
                 {{range .Pages}}
                 <a class="page" href="#">{{.}}</a>
                 {{end}}
-                <a class="next" href="#">Next</a>
+                <a class="next" href="#">{{.i18n.Tr "admin.next"}}</a>
             </div>
         </div>
     </div>
